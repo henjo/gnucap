@@ -23,13 +23,18 @@
 ##  Foundation, Inc.,  51 Franklin Street, Fifth Floor, Boston, MA
 ##  02110-1301, USA.
 
+## gnucap as a shared library
+lib_LTLIBRARIES = libgnucap.la
+libgnucap_la_SOURCES = ${SRCS1} ${MODELSRCS} ${SRCS2}
+libgnucap_includedir=$(includedir)/gnucap
+libgnucap_include_HEADERS = ${RAW_HDRS}
+
 bin_PROGRAMS= gnucap
 
 #------------------------------------------------------------------------
 # These source files can be omitted, and supplied as plugins.
 # device models defined in high level .model files
-MODELS = \
-d_mos1.model d_mos2.model d_mos3.model \
+MODELS = \d_mos1.model d_mos2.model d_mos3.model \
 d_mos4.model d_mos5.model d_mos6.model d_mos7.model d_mos8.model \
 d_mos123.model d_mos_base.model d_mos.model \
 d_bjt.model d_diode.model
@@ -91,7 +96,7 @@ e_base.cc e_card.cc e_node.cc e_model.cc e_compon.cc \
 e_elemnt.cc e_ccsrc.cc e_storag.cc e_cardlist.cc \
 bm_model.cc bm_value.cc bm_cond.cc bm.cc \
 c__cmd.cc c_attach.cc c_file.cc c_genrat.cc \
-findbr.cc plot.cc main.cc globals.cc
+findbr.cc plot.cc globals.cc
 #------------------------------------------------------------------------
 RAW_HDRS = \
 md.h ap.h mode.h constant.h declare.h patchlev.h \
@@ -114,7 +119,8 @@ c_comand.h globals.h
 MODELSRCS= ${MODELS:.model=.cc} ${MODELS:.model=.h}
 MODELOBJS= ${MODELS:.model=.${OBJEXT}}
 
-nodist_gnucap_SOURCES= ${SRCS1} ${MODELSRCS} ${SRCS2}
+nodist_gnucap_SOURCES= main.cc
+gnucap_LDADD = libgnucap.la
 
 SRCS1= 
 SRCS2= ${RAW_SRCS} ${RAW_HDRS}

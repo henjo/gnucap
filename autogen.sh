@@ -12,6 +12,9 @@ export CONFIG_SHELL
 echo "Running aclocal..."
 aclocal $ACLOCAL_FLAGS || exit 1
 
+echo "Running libtoolize..."
+libtoolize --force --copy
+
 echo "Running autoheader..."
 autoheader || exit 1
 

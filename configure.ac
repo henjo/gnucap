@@ -50,6 +50,10 @@ fi
 # Checks for programs.
 AC_PROG_CXX
 
+# Add support for shared libraries
+AC_PROG_LIBTOOL
+#AM_PROG_LIBTOOL
+
 # If we are cross compiling, then we need to search for a
 # gnucap-modelgen program to use for our build.  This can
 # either be an installed modelgen or it can be specified
