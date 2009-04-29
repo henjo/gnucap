@@ -34,7 +34,8 @@ bin_PROGRAMS= gnucap
 #------------------------------------------------------------------------
 # These source files can be omitted, and supplied as plugins.
 # device models defined in high level .model files
-MODELS = \d_mos1.model d_mos2.model d_mos3.model \
+MODELS = \
+d_mos1.model d_mos2.model d_mos3.model \
 d_mos4.model d_mos5.model d_mos6.model d_mos7.model d_mos8.model \
 d_mos123.model d_mos_base.model d_mos.model \
 d_bjt.model d_diode.model
