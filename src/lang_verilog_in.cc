@@ -1,4 +1,4 @@
-/*$Id: lang_verilog_in.cc,v 26.109 2009/02/02 06:39:10 al Exp $ -*- C++ -*-
+/*$Id: lang_verilog_in.cc,v 26.83 2008/06/05 04:46:59 al Exp $ -*- C++ -*-
  * Copyright (C) 2007 Albert Davis
  * Author: Albert Davis <aldavis@gnu.org>
  *
@@ -63,7 +63,7 @@ static void parse_args_instance(CS& cmd, CARD* x)
 	try{
 	  std::string value;
 	  cmd >> value;
-	  x->set_param_by_index(x->param_count() - ++index, value, 0/*offset*/);
+	  x->set_param_by_index(index++, value, 0/*offset*/);
 	}catch (Exception_Too_Many& e) {untested();
 	  cmd.warn(bDANGER, here, e.message());
 	}

@@ -1,4 +1,4 @@
-/*$Id: d_vs.cc,v 26.109 2009/02/02 06:39:10 al Exp $ -*- C++ -*-
+/*$Id: d_vs.cc,v 26.107 2008/12/19 06:13:23 al Exp $ -*- C++ -*-
  * Copyright (C) 2001 Albert Davis
  * Author: Albert Davis <aldavis@gnu.org>
  *
@@ -150,7 +150,7 @@ void DEV_VS::do_ac()
   if (using_ac_eval()) {
     ac_eval();
     _acg = -_loss0 * _ev;
-  }else{itested();
+  }else{untested();
     assert(_acg == 0.);
   }
 }

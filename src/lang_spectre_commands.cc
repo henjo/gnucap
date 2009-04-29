@@ -1,4 +1,4 @@
-/*$Id: lang_spectre_commands.cc,v 26.109 2009/02/02 06:39:10 al Exp $ -*- C++ -*-
+/*$Id: lang_spectre_commands.cc,v 26.83 2008/06/05 04:46:59 al Exp $ -*- C++ -*-
  * Copyright (C) 2007 Albert Davis
  * Author: Albert Davis <aldavis@gnu.org>
  *
@@ -39,8 +39,7 @@ class CMD_MODEL : public CMD {
     unsigned here = cmd.cursor();    
     cmd >> base_name;
 
-    //const MODEL_CARD* p = model_dispatcher[base_name];
-    const CARD* p = lang_spectre.find_proto(base_name, NULL);
+    const MODEL_CARD* p = model_dispatcher[base_name];
     if (p) {
       MODEL_CARD* new_card = dynamic_cast<MODEL_CARD*>(p->clone());
       if (exists(new_card)) {

@@ -1,4 +1,4 @@
-/*$Id: s_tr_swp.cc,v 26.109 2009/02/02 06:39:10 al Exp $ -*- C++ -*-
+/*$Id: s_tr_swp.cc,v 26.97 2008/10/11 03:13:53 al Exp $ -*- C++ -*-
  * Copyright (C) 2001 Albert Davis
  * Author: Albert Davis <aldavis@gnu.org>
  *
@@ -122,8 +122,7 @@ void TRANSIENT::sweep()
     {
       bool printnow =
 	(_trace >= tREJECTED)
-	|| (_accepted && ((_trace >= tALLTIME) 
-			  || (step_cause() == scUSER && time0+_dtmin > _tstart)));
+	|| (_accepted && ((_trace >= tALLTIME) || (step_cause() == scUSER && time0+_dtmin > _tstart)));
       if (printnow) {
 	keep_voltages();
 	outdata(time0);
@@ -400,7 +399,7 @@ bool TRANSIENT::next()
     assert(!_accepted);
     assert(step_cause() < scREJECT);
     assert(step_cause() >= 0);
-    error(bDANGER,"non-recoverable " + TR::step_cause[step_cause()] + "\n");
+    error(bDANGER,"very backward time step\n" + TR::step_cause[step_cause()] + "\n");
     error(bDANGER, "newtime=%e  rejectedtime=%e  oldtime=%e  using=%e\n",
 	  newtime, time0, time1, time1 + _dtmin);
     newtime = time1 + _dtmin;

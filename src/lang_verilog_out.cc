@@ -1,4 +1,4 @@
-/*$Id: lang_verilog_out.cc,v 26.109 2009/02/02 06:39:10 al Exp $ -*- C++ -*-
+/*$Id: lang_verilog_out.cc,v 26.81 2008/05/27 05:34:00 al Exp $ -*- C++ -*-
  * Copyright (C) 2007 Albert Davis
  * Author: Albert Davis <aldavis@gnu.org>
  *
@@ -32,8 +32,7 @@ void LANG_VERILOG::print_args(OMSTREAM& o, const MODEL_CARD* x)
   if (x->use_obsolete_callback_print()) {
     x->print_args_obsolete_callback(o, this);  //BUG//callback//
   }else{
-    //for (int ii = 0;  x->param_exists(ii);  ++ii) {
-    for (int ii = x->param_count() - 1;  ii >= 0;  --ii) {
+    for (int ii = 0;  x->param_exists(ii);  ++ii) {
       if (x->param_is_printable(ii)) {
 	std::string arg = " ." + x->param_name(ii) + "=" + x->param_value(ii) + ";";
 	o << arg;
@@ -53,8 +52,7 @@ void LANG_VERILOG::print_args(OMSTREAM& o, const COMPONENT* x)
     arg_count = INACTIVE;
   }else{
     std::string sep = ".";
-    //for (int ii = 0;  x->param_exists(ii);  ++ii) {
-    for (int ii = x->param_count() - 1;  ii >= 0;  --ii) {
+    for (int ii = 0;  x->param_exists(ii);  ++ii) {
       if (x->param_is_printable(ii)) {
 	o << sep << x->param_name(ii) << "(" << x->param_value(ii) << ")";
 	sep = ",.";
@@ -118,9 +116,9 @@ void LANG_VERILOG::print_paramset(OMSTREAM& o, const MODEL_CARD* x)
 {
   assert(x);
   _mode = mPARAMSET;
-  o << "paramset " << x->short_label() << ' ' << x->dev_type() << ";\\\n";
+  o << "paramset " << x->short_label() << ' ' << x->dev_type() << ";\n";
   print_args(o, x);
-  o << "\\\n"
+  o << "\n"
     "endparmset\n\n";
   _mode = mDEFAULT;
 }

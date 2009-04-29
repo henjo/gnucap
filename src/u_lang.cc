@@ -1,4 +1,4 @@
-/*$Id: u_lang.cc,v 26.109 2009/02/02 06:39:10 al Exp $ -*- C++ -*-
+/*$Id: u_lang.cc,v 26.81 2008/05/27 05:34:00 al Exp $ -*- C++ -*-
  * Copyright (C) 2006 Albert Davis
  * Author: Albert Davis <aldavis@gnu.org>
  *
@@ -46,16 +46,15 @@ const CARD* LANGUAGE::find_proto(const std::string& Name, const CARD* Scope)
     }
   }
   
-  if (p) {itested();
+  if (const MODEL_CARD* m = dynamic_cast<const MODEL_CARD*>(p)) {
+    return m->component_proto(); // type is COMPONENT*
+  }else if (dynamic_cast<const MODEL_SUBCKT*>(p)) {
+    return device_dispatcher["dev_subckt"]; // type is DEV_SUBCKT*
+  }else if (p) {untested();
     return p;
-  }else if ((p = command_dispatcher[Name])) {
-    return new DEV_DOT;
   }else if ((p = device_dispatcher[Name])) {
     return p;
-  }else if ((p = model_dispatcher[Name])) {
-    return p;
   }else{
-    assert(!p);
     std::string s;
     /* */if (Umatch(Name, "b{uild} "))      {itested();  s = "build";}
     else if (Umatch(Name, "del{ete} "))     {            s = "delete";}
@@ -77,10 +76,10 @@ const CARD* LANGUAGE::find_proto(const std::string& Name, const CARD* Scope)
     else{ /* no shortcut available */
       s = Name;
     }
-    if ((command_dispatcher[s])) {
+    if ((p = command_dispatcher[s])) {
       return new DEV_DOT; //BUG// we will look it up twice
     }else{
-      return NULL;
+      return p;
     }
   }
 }
@@ -91,8 +90,9 @@ void LANGUAGE::new__instance(CS& cmd, MODEL_SUBCKT* owner, CARD_LIST* Scope)
     // nothing
   }else{
     std::string type = find_type_in_string(cmd);
+    
     if (const CARD* proto = find_proto(type, owner)) {
-      CARD* new_instance = proto->clone_instance();
+      CARD* new_instance = proto->clone();
       assert(new_instance);
       new_instance->set_owner(owner);
       CARD* x = parse_item(cmd, new_instance);

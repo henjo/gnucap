@@ -1,4 +1,4 @@
-/*$Id: d_coil.cc,v 26.109 2009/02/02 06:39:10 al Exp $ -*- C++ -*-
+/*$Id: d_coil.cc,v 26.107 2008/12/19 06:13:23 al Exp $ -*- C++ -*-
  * Copyright (C) 2001 Albert Davis
  * Author: Albert Davis <aldavis@gnu.org>
  *
@@ -84,7 +84,7 @@ public: // override virtual
   COMPLEX  ac_amps()const;
   //XPROBE ac_probe_ext(const std::string&)const;//ELEMENT
 
-  std::string port_name(int i)const {itested();
+  std::string port_name(int i)const {untested();
     assert(i >= 0);
     assert(i < 2);
     static std::string names[] = {"p", "n"};

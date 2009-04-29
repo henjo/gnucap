@@ -1,4 +1,4 @@
-/*$Id: s_ac.cc,v 26.109 2009/02/02 06:39:10 al Exp $ -*- C++ -*-
+/*$Id: s_ac.cc,v 26.105 2008/12/03 07:18:01 al Exp $ -*- C++ -*-
  * Copyright (C) 2001 Albert Davis
  * Author: Albert Davis <aldavis@gnu.org>
  *
@@ -81,7 +81,7 @@ void AC::do_it(CS& Cmd, CARD_LIST* Scope)
   ::status.set_up.stop();
   switch (ENV::run_mode) {
   case rPRE_MAIN:	unreachable();	break;
-  case rBATCH:		itested();
+  case rBATCH:		untested();
   case rINTERACTIVE:	itested();
   case rSCRIPT:		sweep();	break;
   case rPRESET:		/*nothing*/	break;

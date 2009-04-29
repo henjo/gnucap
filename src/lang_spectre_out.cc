@@ -1,4 +1,4 @@
-/*$Id: lang_spectre_out.cc,v 26.109 2009/02/02 06:39:10 al Exp $ -*- C++ -*-
+/*$Id: lang_spectre_out.cc,v 26.81 2008/05/27 05:34:00 al Exp $ -*- C++ -*-
  * Copyright (C) 2007 Albert Davis
  * Author: Albert Davis <aldavis@gnu.org>
  *
@@ -33,8 +33,7 @@ void LANG_SPECTRE::print_args(OMSTREAM& o, const CARD* x)
   if (x->use_obsolete_callback_print()) {
     x->print_args_obsolete_callback(o, this);  //BUG//callback//
   }else{
-    //for (int ii = 0;  x->param_exists(ii);  ++ii) {
-    for (int ii = x->param_count() - 1;  ii >= 0;  --ii) {
+    for (int ii = 0;  x->param_exists(ii);  ++ii) {
       if (x->param_is_printable(ii)) {
 	std::string arg = " " + x->param_name(ii) + "=" + x->param_value(ii);
 	o << arg;

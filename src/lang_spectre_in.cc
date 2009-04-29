@@ -1,4 +1,4 @@
-/*$Id: lang_spectre_in.cc,v 26.109 2009/02/02 06:39:10 al Exp $ -*- C++ -*-
+/*$Id: lang_spectre_in.cc,v 26.83 2008/06/05 04:46:59 al Exp $ -*- C++ -*-
  * Copyright (C) 2007 Albert Davis
  * Author: Albert Davis <aldavis@gnu.org>
  *
@@ -43,7 +43,6 @@ static void parse_args(CS& cmd, CARD* x)
     try{
       std::string name, value;
       cmd >> name >> '=' >> value;
-      std::cout << name << '=' << value << ";\n";
       x->set_param_by_name(name, value);
     }catch (Exception_No_Match&) {untested();
       cmd.warn(bDANGER, here, "bad parameter, ignored");
@@ -110,7 +109,7 @@ DEV_DOT* LANG_SPECTRE::parse_command(CS& cmd, DEV_DOT* x)
   x->set(cmd.fullstring());
   CARD_LIST* scope = (x->owner()) ? x->owner()->subckt() : &CARD_LIST::card_list;
 
-  cmd.reset().skipbl();
+  cmd.reset();
   if ((cmd >> "model |simulator |parameters |subckt ")) {
     cmd.reset();
     CMD::cmdproc(cmd, scope);
@@ -138,7 +137,7 @@ DEV_DOT* LANG_SPECTRE::parse_command(CS& cmd, DEV_DOT* x)
 MODEL_CARD* LANG_SPECTRE::parse_paramset(CS& cmd, MODEL_CARD* x)
 {
   assert(x);
-  cmd.reset().skipbl();
+  cmd.reset();
   cmd >> "model ";
   parse_label(cmd, x);
   parse_type(cmd, x);
@@ -152,7 +151,7 @@ MODEL_SUBCKT* LANG_SPECTRE::parse_module(CS& cmd, MODEL_SUBCKT* x)
   assert(x);
 
   // header
-  cmd.reset().skipbl();
+  cmd.reset();
   cmd >> "subckt ";
   parse_label(cmd, x);
   parse_ports(cmd, x);
@@ -185,10 +184,10 @@ std::string LANG_SPECTRE::find_type_in_string(CS& cmd)
 {
   // known to be not always correct
 
-  cmd.reset().skipbl();
+  cmd.reset();
   unsigned here = 0;
   std::string type;
-  if ((cmd >> "*|//")) {untested();
+  if ((cmd >> "*|//")) {
     assert(here == 0);
     type = "dev_comment";
   }else if ((cmd >> "model |simulator |parameters |subckt ")) {
@@ -200,7 +199,7 @@ std::string LANG_SPECTRE::find_type_in_string(CS& cmd)
     here = cmd.cursor();
     cmd.reset(here);
     cmd >> type;
-  }else if (cmd.reset().scan("=")) {untested();
+  }else if (cmd.reset().scan("=")) {
     // back up two, by starting over
     cmd.reset().skiparg();
     unsigned here1 = cmd.cursor();

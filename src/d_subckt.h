@@ -1,4 +1,4 @@
-/*$Id: d_subckt.h,v 26.109 2009/02/02 06:39:10 al Exp $ -*- C++ -*-
+/*$Id: d_subckt.h,v 26.99 2008/11/13 17:55:40 al Exp $ -*- C++ -*-
  * Copyright (C) 2001 Albert Davis
  * Author: Albert Davis <aldavis@gnu.org>
  *
@@ -37,7 +37,6 @@ public:
 		~MODEL_SUBCKT();
 public: // override virtual
   char		id_letter()const	{untested();return '\0';}
-  CARD*	clone_instance()const;
   bool		print_type_in_spice()const {unreachable(); return false;}
   std::string   value_name()const	{incomplete(); return "";}
   std::string   dev_type()const		{untested(); return "";}
@@ -66,7 +65,6 @@ private:
 };
 /*--------------------------------------------------------------------------*/
 class DEV_SUBCKT : public BASE_SUBCKT {
-  friend class MODEL_SUBCKT;
 private:
   explicit	DEV_SUBCKT(const DEV_SUBCKT&);
 public:
@@ -88,7 +86,7 @@ private: // override virtual
   std::string port_name(int i)const {itested();
     if (_parent) {itested();
       return _parent->port_value(i);
-    }else{itested();
+    }else{
       return "";
     }
   }

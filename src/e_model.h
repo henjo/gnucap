@@ -1,4 +1,4 @@
-/*$Id: e_model.h,v 26.109 2009/02/02 06:39:10 al Exp $ -*- C++ -*-
+/*$Id: e_model.h,v 26.98 2008/10/24 06:10:07 al Exp $ -*- C++ -*-
  * Copyright (C) 2001 Albert Davis
  * Author: Albert Davis <aldavis@gnu.org>
  *
@@ -49,8 +49,6 @@ public:
 
 public: // override virtuals
   char	id_letter()const	{untested();return '\0';}
-  CARD*	clone_instance()const   
-		{itested(); assert(_component_proto); return _component_proto->clone();}
   void	precalc();
   void	set_param_by_index(int, std::string&, int);
   bool  param_is_printable(int)const;
@@ -70,9 +68,9 @@ public:
 
   virtual bool is_valid(const COMPONENT*)const {return true;}
 
-  const CARD* component_proto()const {itested(); return _component_proto;}
+  const COMPONENT* component_proto()const {itested(); return _component_proto;}
 protected:
-  const CARD* _component_proto;
+  const COMPONENT* _component_proto;
 public:
   PARAMETER<double> _tnom_c;
 };

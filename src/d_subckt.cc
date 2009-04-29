@@ -1,4 +1,4 @@
-/*$Id: d_subckt.cc,v 26.109 2009/02/02 06:39:10 al Exp $ -*- C++ -*-
+/*$Id: d_subckt.cc,v 26.98 2008/10/24 06:10:07 al Exp $ -*- C++ -*-
  * Copyright (C) 2001 Albert Davis
  * Author: Albert Davis <aldavis@gnu.org>
  *
@@ -120,13 +120,6 @@ MODEL_SUBCKT::MODEL_SUBCKT(const MODEL_SUBCKT& p)
 MODEL_SUBCKT::~MODEL_SUBCKT()
 {
   --_count;
-}
-/*--------------------------------------------------------------------------*/
-CARD* MODEL_SUBCKT::clone_instance()const
-{itested();
-  DEV_SUBCKT* new_instance = dynamic_cast<DEV_SUBCKT*>(p1.clone());
-  new_instance->_parent = this;
-  return new_instance;
 }
 /*--------------------------------------------------------------------------*/
 DEV_SUBCKT::DEV_SUBCKT()

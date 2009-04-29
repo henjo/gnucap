@@ -1,4 +1,4 @@
-/*$Id: bm_sin.cc,v 26.109 2009/02/02 06:39:10 al Exp $ -*- C++ -*-
+/*$Id: bm_sin.cc,v 26.96 2008/10/09 05:36:27 al Exp $ -*- C++ -*-
  * Copyright (C) 2001 Albert Davis
  * Author: Albert Davis <aldavis@gnu.org>
  *
@@ -227,7 +227,7 @@ bool EVAL_BM_SIN::parse_params_obsolete_callback(CS& cmd)
 /*--------------------------------------------------------------------------*/
 /*--------------------------------------------------------------------------*/
 EVAL_BM_SIN p1(CC_STATIC);
-DISPATCHER<COMMON_COMPONENT>::INSTALL d1(&bm_dispatcher, "sin|sine", &p1);
+DISPATCHER<COMMON_COMPONENT>::INSTALL d1(&bm_dispatcher, "sin", &p1);
 }
 /*--------------------------------------------------------------------------*/
 /*--------------------------------------------------------------------------*/

@@ -1,4 +1,4 @@
-/*$Id: e_card.cc,v 26.109 2009/02/02 06:39:10 al Exp $ -*- C++ -*-
+/*$Id: e_card.cc,v 26.105 2008/12/03 07:18:01 al Exp $ -*- C++ -*-
  * Copyright (C) 2001 Albert Davis
  * Author: Albert Davis <aldavis@gnu.org>
  *
@@ -162,23 +162,18 @@ const CARD* CARD::find_looking_out(const std::string& name, int warnlevel)const
     if (owner()) {
       c = owner()->find_looking_out(name, warnlevel);
     }else if (makes_own_scope()) {
-      // probably a subckt or "module"
       CARD_LIST::const_iterator i = CARD_LIST::card_list.find_(name);
-      if (i != CARD_LIST::card_list.end()) {itested();
+      if (i != CARD_LIST::card_list.end()) {untested();
 	c = *i;
       }else{
-	assert(!c);
       }
     }else{
-      assert(!c);
     }
   }else{
-    assert(c);
   }
   if (!c) {
     error(warnlevel, "can't find: " + name + " in " + long_label() + "\n");
   }else{
-    assert(c);
   }
   return c;
 }
@@ -330,8 +325,8 @@ std::string CARD::param_value(int)const
  */
 void CARD::set_dev_type(const std::string& New_Type)
 {
-  if (!Umatch(New_Type, dev_type() + ' ')) {itested();
-    //throw Exception_Cant_Set_Type(dev_type(), New_Type);
+  if (!Umatch(New_Type, dev_type() + ' ')) {untested();
+    throw Exception_Cant_Set_Type(dev_type(), New_Type);
   }else{
     // it matches -- ok.
   }

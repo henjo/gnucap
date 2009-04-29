@@ -1,4 +1,4 @@
-/*$Id: e_card.h,v 26.109 2009/02/02 06:39:10 al Exp $ -*- C++ -*-
+/*$Id: e_card.h,v 26.100 2008/11/17 09:11:43 al Exp $ -*- C++ -*-
  * Copyright (C) 2001 Albert Davis
  * Author: Albert Davis <aldavis@gnu.org>
  *
@@ -62,7 +62,6 @@ public:					// virtuals. -- the important stuff
   virtual void print_args_obsolete_callback(OMSTREAM&,LANGUAGE*)const {unreachable();}
   virtual char	 id_letter()const	{unreachable(); return '\0';}
   virtual CARD*	 clone()const		{unreachable(); return NULL;}
-  virtual CARD*	 clone_instance()const  {itested(); return clone();}
   virtual void	 expand_first()		{}
   virtual void	 expand()		{}
   virtual void	 expand_last()		{}

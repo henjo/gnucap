@@ -1,4 +1,4 @@
-/*$Id: e_model.cc,v 26.109 2009/02/02 06:39:10 al Exp $ -*- C++ -*-
+/*$Id: e_model.cc,v 26.98 2008/10/24 06:10:07 al Exp $ -*- C++ -*-
  * Copyright (C) 2001 Albert Davis
  * Author: Albert Davis <aldavis@gnu.org>
  *
@@ -23,7 +23,6 @@
  */
 //testing=script 2006.07.12
 #include "s__.h"
-#include "e_compon.h"
 #include "e_model.h"
 /*--------------------------------------------------------------------------*/
 MODEL_CARD::MODEL_CARD(const COMPONENT* p)

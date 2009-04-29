@@ -545,8 +545,8 @@ e_node.o: e_node.cc u_nodemap.h md.h io_trace.h io_error.h d_logic.h \
 e_model.o: e_model.cc s__.h c_comand.h e_card.h e_cardlist.h md.h \
   io_trace.h io_error.h u_time_pair.h constant.h e_base.h l_compar.h \
   u_opt.h mode.h io_.h l_lib.h u_status.h l_timer.h m_matrix.h \
-  l_stlextra.h e_compon.h u_parameter.h globals.h l_dispatcher.h ap.h \
-  m_expression.h m_base.h e_model.h
+  l_stlextra.h e_model.h u_parameter.h globals.h l_dispatcher.h ap.h \
+  m_expression.h m_base.h
 e_compon.o: e_compon.cc u_lang.h u_opt.h mode.h io_.h l_lib.h md.h \
   io_trace.h io_error.h e_model.h u_parameter.h globals.h l_dispatcher.h \
   l_stlextra.h ap.h m_expression.h m_base.h constant.h e_cardlist.h \

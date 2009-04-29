@@ -1,4 +1,4 @@
-/* $Id: spice-wrapper.cc,v 26.109 2009/02/02 06:39:10 al Exp $ -*- C++ -*-
+/* $Id: spice-wrapper.cc,v 26.108 2008/12/23 06:25:41 al Exp $ -*- C++ -*-
  * Copyright (C) 2007 Albert Davis
  * Author: Albert Davis <aldavis@gnu.org>
  *
@@ -431,7 +431,7 @@ void DEV_SPICE::localize_ckt()const
   for (int ii=0; ii<OPT::_keep_time_steps-1; ++ii) {
     ckt()->CKTdeltaOld[ii] = _time[ii] - _time[ii+1];
   }
-  assert(_dt == NOT_VALID || conchk(ckt()->CKTdelta, ckt()->CKTdeltaOld[0]));
+  assert(_dt == NOT_VALID || ckt()->CKTdelta == ckt()->CKTdeltaOld[0]);
 
   //ckt()->CKTag[0] = tr_c_to_g(1, ckt()->CKTag[0]);
   // defer fixing this -- GEAR not here
