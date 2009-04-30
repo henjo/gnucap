@@ -31,6 +31,10 @@ AM_CONFIG_HEADER([config.h])
 
 AM_MAINTAINER_MODE
 
+## Libtool init
+LT_INIT
+AC_CONFIG_MACRO_DIR([m4])
+
 AC_MSG_CHECKING([if debug code should be compiled in])
 AC_ARG_ENABLE([debug],
 [  --enable-debug            Enable building of debug code. [[default: disabled]]],
