@@ -26,7 +26,7 @@
 ## gnucap as a shared library
 lib_LTLIBRARIES = libgnucap.la
 libgnucap_la_SOURCES = ${SRCS1} ${MODELSRCS} ${SRCS2}
-libgnucap_includedir=$(includedir)/gnucap
+libgnucap_includedir = $(includedir)/gnucap
 libgnucap_include_HEADERS = ${RAW_HDRS}
 
 bin_PROGRAMS= gnucap
@@ -118,6 +118,8 @@ c_comand.h globals.h
 #------------------------------------------------------------------------
 ## The modelgen generated files
 MODELSRCS= ${MODELS:.model=.cc} ${MODELS:.model=.h}
+MODELCODE= ${MODELS:.model=.cc}
+MODELHDR= ${MODELS:.model=.h}
 MODELOBJS= ${MODELS:.model=.${OBJEXT}}
 
 nodist_gnucap_SOURCES= main.cc
@@ -130,6 +132,9 @@ SRCS2= ${RAW_SRCS} ${RAW_HDRS}
 # this is a bit overkill, but for example the bjt model makes use of the
 # diode model and we want to be sure and capture that dependency
 ${MODELOBJS}: ${MODELSRCS}
+
+## Make all model generated c++ file depend on all headers
+${MODELCODE}: ${MODELHDR}
 
 ## Include the .model files in the distfile as well as the rest of the
 ## non-generated sources
