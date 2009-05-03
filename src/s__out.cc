@@ -135,7 +135,7 @@ void SIM::store_results(double x)
   }
 }
 /*--------------------------------------------------------------------------*/
-WAVE* SIM::find_wave(std::string& probe_name)
+WAVE* SIM::find_wave(const std::string& probe_name)
 {
   int ii = 0;
   for (PROBELIST::const_iterator
