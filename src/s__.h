@@ -141,7 +141,7 @@ protected:
 	 void	alarm();
   virtual void	store_results(double);
 public:
-  static WAVE* find_wave(std::string& probe_name);
+  static WAVE* find_wave(const std::string& probe_name);
   /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */ 
 protected:				/* s__solve.cc */
   bool	solve(OPT::ITL,TRACE);
