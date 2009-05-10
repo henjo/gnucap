@@ -32,7 +32,8 @@ AM_CONFIG_HEADER([config.h])
 AM_MAINTAINER_MODE
 
 ## Libtool init
-LT_INIT
+LT_PREREQ()
+AC_PROG_LIBTOOL
 AC_CONFIG_MACRO_DIR([m4])
 
 AC_MSG_CHECKING([if debug code should be compiled in])
