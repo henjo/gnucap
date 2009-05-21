@@ -82,7 +82,7 @@ public:
   int	step_cause()const;
   void	first();
   bool	next();
-  void	accept();
+  virtual void	accept();
   void	reject();
   /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */ 
 private:
