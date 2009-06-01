@@ -150,14 +150,14 @@ public:
   int		size()const		{return _size;}
   double 	density();
   T 	d(int r, int  )const	{return *(_diaptr[r]);}
-  T&	m(int r, int c);
+  const T& s(int r, int c);
 private:
   T 	u(int r, int c)const	{return _colptr[c][r];}
   T 	l(int r, int c)const	{return _rowptr[r][-c];}
   T&	d(int r, int c);
   T&	u(int r, int c);
   T&	l(int r, int c);
-  //T&	s(int r, int c);
+  T&	m(int r, int c);
 public:
   void		load_diagonal_point(int i, T value);
   void		load_point(int i, int j, T value);
@@ -459,7 +459,7 @@ T& BSMATRIX<T>::m(int r, int c)
  */
 #if 0
 template <class T>
-T& BSMATRIX<T>::s(int row, int col)
+const T& BSMATRIX<T>::s(int row, int col)
 {untested();
   assert(_lownode);
   assert(0 <= col);
