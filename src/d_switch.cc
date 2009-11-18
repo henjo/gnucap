@@ -1,4 +1,4 @@
-/*$Id: d_switch.cc,v 26.107 2008/12/19 06:13:23 al Exp $ -*- C++ -*-
+/*$Id: d_switch.cc,v 26.127 2009/11/09 16:06:11 al Exp $ -*- C++ -*-
  * Copyright (C) 2001 Albert Davis
  * Author: Albert Davis <aldavis@gnu.org>
  *
@@ -28,7 +28,6 @@
  * model:   .model mname CSW <args>
  */
 //testing=script 2006.06.14
-#include "globals.h"
 #include "e_model.h"
 #include "e_elemnt.h"
 /*--------------------------------------------------------------------------*/
@@ -71,8 +70,9 @@ protected: // override virtual
   int	   matrix_nodes()const	{return 2;}
   int	   net_nodes()const	= 0;
   CARD*	   clone()const		= 0;
+  //void   precalc_first();	//ELEMENT
   void     expand();
-  void     precalc();
+  void     precalc_last();
   //void   map_nodes();		//ELEMENT
 
   void	   tr_iwant_matrix()	{tr_iwant_matrix_passive();}
@@ -94,7 +94,7 @@ protected: // override virtual
 				{unreachable(); return tr_outvolts_limited();}
   //double tr_input_limited()const //ELEMENT
   //double tr_amps()const	//ELEMENT
-  double   tr_probe_num(const std::string&)const;
+  //double tr_probe_num(const std::string&)const; //ELEMENT
 
   void	   ac_iwant_matrix()	{ac_iwant_matrix_passive();}
   void	   ac_begin()		{_ev = _y[0].f1; _acg = _m0.c1;}
@@ -176,7 +176,7 @@ private: // override virtual
   void		set_dev_type(const std::string& nt);
   std::string	dev_type()const;
   CARD*		clone()const	{return new MODEL_SWITCH(*this);}
-  void		precalc();
+  void		precalc_first();
   void		set_param_by_index(int, std::string&, int);
   bool		param_is_printable(int)const;
   std::string	param_name(int)const;
@@ -282,11 +282,13 @@ void MODEL_SWITCH::set_dev_type(const std::string& new_type)
   }
 }
 /*--------------------------------------------------------------------------*/
-void MODEL_SWITCH::precalc()
+void MODEL_SWITCH::precalc_first()
 {
+  MODEL_CARD::precalc_first();
+
   const CARD_LIST* par_scope = scope();
   assert(par_scope);
-  MODEL_CARD::precalc();
+
   vt.e_val(_default_vt, par_scope);
   vh.e_val(_default_vh, par_scope);
   ron.e_val(_default_ron, par_scope);
@@ -421,11 +423,11 @@ void SWITCH_BASE::expand()
   }
 }
 /*--------------------------------------------------------------------------*/
-void SWITCH_BASE::precalc()
+void SWITCH_BASE::precalc_last()
 {
-  ELEMENT::precalc();
+  ELEMENT::precalc_last();
     
-  if (!nstat) {
+  if (is_first_expand()) {
     const COMMON_SWITCH* c = prechecked_cast<const COMMON_SWITCH*>(common());
     assert(c);
     const MODEL_SWITCH* m = prechecked_cast<const MODEL_SWITCH*>(c->model());
@@ -502,10 +504,10 @@ void SWITCH_BASE::tr_advance()
   assert(_y[0].f1 == ((_state[0] == _ON) ? m->ron : m->roff));
   assert(_y[0].f0 == LINEAR);
   trace4("", _m0.c1, 1./_y[0].f1, ((_m0.c1) - (1./_y[0].f1)), ((_m0.c1) / (1./_y[0].f1)));
-  assert(_m0.c1 == 1./_y[0].f1);
+  assert(conchk(_m0.c1, 1./_y[0].f1));
   assert(_m0.c0 == 0.);
   set_converged();
- }
+}
 /*--------------------------------------------------------------------------*/
 void SWITCH_BASE::tr_regress()
 {
@@ -548,10 +550,12 @@ bool SWITCH_BASE::do_tr()
       _y[0].f1 = (new_state == _ON) ? m->ron : m->roff;	/* unknown is off */
       _state[0] = new_state;
       _m0.c1 = 1./_y[0].f1;
+      trace4("change", new_state, old_state, _y[0].f1, _m0.c1);
       q_load();
       store_values();
       set_not_converged();
     }else{
+      trace3("no change", new_state, _y[0].f1, _m0.c1);
       set_converged();
     }
   }else{
@@ -603,11 +607,6 @@ TIME_PAIR SWITCH_BASE::tr_review()
   // _time_by_event is the predicted switch time
 
   return _time_by;
-}
-/*--------------------------------------------------------------------------*/
-double SWITCH_BASE::tr_probe_num(const std::string& x)const
-{
-  return ELEMENT::tr_probe_num(x);
 }
 /*--------------------------------------------------------------------------*/
 void SWITCH_BASE::do_ac()

@@ -1,4 +1,4 @@
-/*$Id: c_prbcmd.cc,v 26.96 2008/10/09 05:36:27 al Exp $ -*- C++ -*-
+/*$Id: c_prbcmd.cc,v 26.110 2009/05/28 15:32:04 al Exp $ -*- C++ -*-
  * Copyright (C) 2001 Albert Davis
  * Author: Albert Davis <aldavis@gnu.org>
  *
@@ -133,7 +133,7 @@ public:
     do_probe(cmd,PROBE_LISTS::plot);
   }
 } p2;
-DISPATCHER<CMD>::INSTALL d2(&command_dispatcher, "plot", &p2);
+DISPATCHER<CMD>::INSTALL d2(&command_dispatcher, "iplot|plot", &p2);
 /*--------------------------------------------------------------------------*/
 class CMD_PRINT : public CMD {
 public:
@@ -143,7 +143,7 @@ public:
     do_probe(cmd,PROBE_LISTS::print);
   }
 } p3;
-DISPATCHER<CMD>::INSTALL d3(&command_dispatcher, "print|probe", &p3);
+DISPATCHER<CMD>::INSTALL d3(&command_dispatcher, "iprint|print|probe", &p3);
 /*--------------------------------------------------------------------------*/
 }
 /*--------------------------------------------------------------------------*/

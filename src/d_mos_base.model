@@ -1,4 +1,4 @@
-/* $Id: d_mos_base.model,v 26.92 2008/08/23 05:40:00 al Exp $ -*- C++ -*-
+/* $Id: d_mos_base.model,v 26.124 2009/09/28 22:59:33 al Exp $ -*- C++ -*-
  * Copyright (C) 2001 Albert Davis
  * Author: Albert Davis <aldavis@gnu.org>
  *
@@ -37,6 +37,12 @@ model BUILT_IN_MOS_BASE {
     pmos polarity=pP;
   }
   validate {
+    c->l_in.e_val(OPT::defl,d->scope());
+    c->w_in.e_val(OPT::defw,d->scope());
+    m->lmin.e_val(0,m->scope());
+    m->lmax.e_val(INF,m->scope());
+    m->wmin.e_val(0,m->scope());
+    m->wmax.e_val(INF,m->scope());
     return c->l_in >= m->lmin && c->l_in <= m->lmax
       && c->w_in >= m->wmin && c->w_in <= m->wmax;
   }
@@ -106,11 +112,11 @@ model BUILT_IN_MOS_BASE {
     }
     code_post {
       if ((!has_hard_value(rs)) && has_hard_value(rd)) {untested();//106
-	error(((nstat) ? (bDEBUG) : (bWARNING)),
+	error(((!is_first_expand()) ? (bDEBUG) : (bWARNING)),
 	      long_label() + ": rd input, but not rs. setting rs = 0.\n");
 	rs.set_default(0.);
       }else if ((!has_hard_value(rd)) && has_hard_value(rs)) {untested();//109
-	error(((nstat) ? (bDEBUG) : (bWARNING)), 
+	error(((!is_first_expand()) ? (bDEBUG) : (bWARNING)), 
 	      long_label() + ": rs input, but not rd. setting rd = 0.\n");
 	rd.set_default(0.);
       }else{
@@ -119,7 +125,7 @@ model BUILT_IN_MOS_BASE {
       
       if (has_hard_value(rsh)
 	  &&  (has_hard_value(rd) || has_hard_value(rs))) {
-	error(((nstat) ? (bDEBUG) : (bWARNING)),
+	error(((!is_first_expand()) ? (bDEBUG) : (bWARNING)),
 	      long_label() + ": rsh - rs - rd conflict: using "
 	      + (((rd <= 0.)  &&  (rs <= 0.)) ? "rsh" : "rs,rd") + '\n');
       }else if (!has_hard_value(rsh)
@@ -133,7 +139,7 @@ model BUILT_IN_MOS_BASE {
       if (!has_hard_value(is) && !has_hard_value(js)) {
 	/* don't have either, use default is */
       }else if (has_hard_value(is) && has_hard_value(js)) {
-	error(((nstat) ? (bDEBUG) : (bWARNING)),
+	error(((!is_first_expand()) ? (bDEBUG) : (bWARNING)),
 	      long_label() + ": is - js conflict\n");
       }else{
 	/* is, js are ok, have one or other */

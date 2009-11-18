@@ -1,4 +1,4 @@
-/*$Id: c__cmd.cc,v 26.84 2008/06/08 21:27:02 al Exp $ -*- C++ -*-
+/*$Id: c__cmd.cc,v 26.110 2009/05/28 15:32:04 al Exp $ -*- C++ -*-
  * Copyright (C) 2001 Albert Davis
  * Author: Albert Davis <aldavis@gnu.org>
  *
@@ -66,7 +66,7 @@ void CMD::cmdproc(CS& cmd, CARD_LIST* scope)
   else if (cmd.umatch("pr{int} "))      {            s = "print";}
   else if (cmd.umatch("q{uit} "))       {	     s = "quit";}
   else if (cmd.umatch("st{atus} "))     {            s = "status";}
-  else if (cmd.umatch("te{mperature} ")){untested(); s = "temperature";}
+  else if (cmd.umatch("te{mperature} ")){itested();  s = "temperature";}
   else if (cmd.umatch("tr{ansient} "))  {            s = "transient";}
   else if (cmd.umatch("!"))		{	     s = "system";}
   else if (cmd.umatch("<"))		{untested(); s = "<";}

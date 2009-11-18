@@ -1,4 +1,4 @@
-/*$Id: m_expression_dump.cc,v 26.81 2008/05/27 05:34:00 al Exp $ -*- C++ -*-
+/*$Id: m_expression_dump.cc,v 26.115 2009/08/17 22:49:30 al Exp $ -*- C++ -*-
  * Copyright (C) 2003 Albert Davis
  * Author: Albert Davis <aldavis@gnu.org>
  *
@@ -21,10 +21,11 @@
  *------------------------------------------------------------------
  * Reconstructs an infix expression from the RPN.
  */
+//testing=script,sparse 2009.08.12
 #include "m_expression.h"
 /*--------------------------------------------------------------------------*/
 void Token::dump(std::ostream& out)const
-{
+{itested();
   out << _name << ' ';
 }
 /*--------------------------------------------------------------------------*/
@@ -38,10 +39,14 @@ void Expression::dump(std::ostream& out)const
     if (dynamic_cast<const Token_STOP*>(*i)) {
       stack.push_back(*i);
     }else if (dynamic_cast<const Token_PARLIST*>(*i)) {
+      // pop*n  push
       bool been_here = false;
       std::string tmp(")");
       for (;;) {
-	assert(!stack.empty());
+	if (stack.empty()) {untested();
+	  throw Exception("bad expression");
+	}else{
+	}
 	const Token* t = stack.back();
 	stack.pop_back();
 	if (dynamic_cast<const Token_STOP*>(t)) {
@@ -53,7 +58,7 @@ void Expression::dump(std::ostream& out)const
 	  }else{
 	    been_here = true;
 	  }
-	  tmp = t->name() + tmp;
+	  tmp = t->full_name() + tmp;
 	}else{
 	  unreachable();
 	}
@@ -64,6 +69,7 @@ void Expression::dump(std::ostream& out)const
     }else if (dynamic_cast<const Token_CONSTANT*>(*i)|| dynamic_cast<const Token_SYMBOL*>(*i)) {
       if (!stack.empty() && (dynamic_cast<const Token_PARLIST*>(stack.back()))) {
 	// has parameters (table or function)
+	// pop op push
 	const Token* t1 = stack.back();
 	stack.pop_back();
 	Token* t = new Token_SYMBOL((**i).name(), t1->full_name());
@@ -74,6 +80,7 @@ void Expression::dump(std::ostream& out)const
 	stack.push_back(*i);
       }
     }else if (dynamic_cast<const Token_BINOP*>(*i)) {
+      // pop pop op push
       assert(!stack.empty());
       const Token* t2 = stack.back();
       stack.pop_back();
@@ -85,17 +92,19 @@ void Expression::dump(std::ostream& out)const
       locals.push_back(t);
       stack.push_back(t);
     }else if (dynamic_cast<const Token_UNARY*>(*i)) {
+      // pop op push
       assert(!stack.empty());
       const Token* t1 = stack.back();
       stack.pop_back();
-      Token* t = new Token_SYMBOL((**i).name(), t1->name());
+      std::string tmp('(' + (**i).name() + ' ' + t1->full_name() + ')');
+      Token* t = new Token_SYMBOL(tmp, "");
       locals.push_back(t);
       stack.push_back(t);
     }else{
       unreachable();
     }
   }
-  if (stack.empty()) {
+  if (stack.empty()) {untested();
     out << "empty";
   }else{
     out << stack.back()->full_name();

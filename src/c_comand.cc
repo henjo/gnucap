@@ -1,4 +1,4 @@
-/*$Id: c_comand.cc,v 26.83 2008/06/05 04:46:59 al Exp $ -*- C++ -*-
+/*$Id: c_comand.cc,v 26.110 2009/05/28 15:32:04 al Exp $ -*- C++ -*-
  * Copyright (C) 2001 Albert Davis
  * Author: Albert Davis <aldavis@gnu.org>
  *
@@ -99,13 +99,13 @@ DISPATCHER<CMD>::INSTALL d2(&command_dispatcher, "quit|exit", &p2);
 /*--------------------------------------------------------------------------*/
 class CMD_TEMP : public CMD {
 public:
-  void do_it(CS& cmd, CARD_LIST*) {untested();
+  void do_it(CS& cmd, CARD_LIST*) {itested();
     double t = NOT_INPUT;
     unsigned here = cmd.cursor();
     cmd >> '=' >> t;
-    if (!cmd.stuck(&here)) {untested();
+    if (!cmd.stuck(&here)) {itested();
       OPT::temp_c = t;
-    }else{untested();
+    }else{itested();
       IO::mstdout << ".temp = " << OPT::temp_c << '\n';
     }
   }
@@ -117,7 +117,7 @@ public:
   void do_it(CS& cmd, CARD_LIST*) {
     if (cmd.more()) {
       head = cmd.tail();
-    }else{untested(); 
+    }else{itested(); 
       IO::mstdout << head << '\n';
     }
   }

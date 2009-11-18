@@ -1,4 +1,4 @@
-/*$Id: d_vcg.cc,v 26.100 2008/11/17 09:11:43 al Exp $ -*- C++ -*-
+/*$Id: d_vcg.cc,v 26.111 2009/06/11 04:20:10 al Exp $ -*- C++ -*-
  * Copyright (C) 2001 Albert Davis
  * Author: Albert Davis <aldavis@gnu.org>
  *
@@ -30,7 +30,6 @@
  *		_loss0 == 1/R. (mhos)
  */
 //testing=script 2006.07.17
-#include "globals.h"
 #include "e_elemnt.h"
 /*--------------------------------------------------------------------------*/
 namespace {
@@ -48,7 +47,6 @@ private: // override virtual
   int	   min_nodes()const	{return 4;}
   int	   matrix_nodes()const	{return 4;}
   int	   net_nodes()const	{return 4;}
-  bool	   is_2port()const	{untested();return true;}
   bool	   use_obsolete_callback_parse()const {return true;}
   CARD*	   clone()const		{return new DEV_VCG(*this);}
   //void   expand();		//COMPONENT

@@ -1,4 +1,4 @@
-/*$Id: c_list.cc,v 26.96 2008/10/09 05:36:27 al Exp $ -*- C++ -*-
+/*$Id: c_list.cc,v 26.127 2009/11/09 16:06:11 al Exp $ -*- C++ -*-
  * Copyright (C) 2001 Albert Davis
  * Author: Albert Davis <aldavis@gnu.org>
  *
@@ -23,6 +23,7 @@
  * save is list with direction to file
  */
 //testing=script 2006.07.17
+#include "s__.h"
 #include "u_lang.h"
 #include "c_comand.h"
 #include "globals.h"
@@ -31,6 +32,8 @@ namespace {
 /*--------------------------------------------------------------------------*/
 void list_save(CS& cmd, OMSTREAM out, CARD_LIST* scope)
 {
+  CARD_LIST::card_list.precalc_first();
+
   //out.setfloatwidth(7);
   switch (ENV::run_mode) {
   case rPRE_MAIN:
@@ -112,7 +115,7 @@ DISPATCHER<CMD>::INSTALL d1(&command_dispatcher, "list", &p1);
 class CMD_SAVE : public CMD {
 public:
   void do_it(CS& cmd, CARD_LIST* Scope)
-  {untested();
+  {itested();
     cmd.reset(); /* back up to beginning of input line */
     OMSTREAM out; // = IO::mstdout;
     list_save(cmd, *outset(cmd,&out), Scope);

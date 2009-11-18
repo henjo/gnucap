@@ -1,4 +1,4 @@
-/*$Id: e_elemnt.cc,v 26.97 2008/10/11 03:13:53 al Exp $ -*- C++ -*-
+/*$Id: e_elemnt.cc,v 26.127 2009/11/09 16:06:11 al Exp $ -*- C++ -*-
  * Copyright (C) 2001 Albert Davis
  * Author: Albert Davis <aldavis@gnu.org>
  *
@@ -78,13 +78,13 @@ bool ELEMENT::skip_dev_type(CS& cmd)
   return cmd.umatch(dev_type() + ' ');
 }
 /*--------------------------------------------------------------------------*/
-void ELEMENT::precalc()
+void ELEMENT::precalc_last()
 {
-  COMPONENT::precalc();
+  COMPONENT::precalc_last();
 
   //BUG// This is needed for AC analysis without doing op (or dc or tran ...) first.
   // Something like it should be moved to ac_begin.
-  if (!nstat) {
+  if (is_first_expand()) {
     _y[0].x  = 0.;
     _y[0].f0 = LINEAR;
     _y[0].f1 = value();
@@ -306,17 +306,19 @@ double ELEMENT::tr_probe_num(const std::string& x)const
     }else{
       return _y[0].f0;
     }
+  }else if (Umatch(x, "ev |df ")) {
+    return _y[0].f1;
   }else if (Umatch(x, "nv ")) {
     return value();
-  }else if (Umatch(x, "ev ")) {
-    return _y[0].f1;
-  }else if (Umatch(x, "y ")) {
-    return _m0.c1;
   }else if (Umatch(x, "eiv ")) {untested();
     return _m0.x;
+  }else if (Umatch(x, "y ")) {
+    return _m0.c1;
+  }else if (Umatch(x, "is{tamp} ")) {
+    return _m0.f0();
   }else if (Umatch(x, "iof{fset} ")) {itested();
     return _m0.c0;
-  }else if (Umatch(x, "ip{assive} ")) {untested();
+  }else if (Umatch(x, "ip{assive} ")) {itested();
     return _m0.c1 * tr_involts();
   }else if (Umatch(x, "il{oss} ")) {untested();
     return _loss0 * tr_outvolts();

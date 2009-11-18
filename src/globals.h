@@ -1,4 +1,4 @@
-/*$Id: globals.h,v 26.82 2008/06/01 14:20:25 al Exp $ -*- C++ -*-
+/*$Id: globals.h,v 26.113 2009/08/12 03:37:19 al Exp $ -*- C++ -*-
  * Copyright (C) 2007 Albert Davis
  * Author: Albert Davis <aldavis@gnu.org>
  *
@@ -36,7 +36,8 @@ extern INTERFACE DISPATCHER<MODEL_CARD> model_dispatcher;
 extern INTERFACE DISPATCHER<CARD> device_dispatcher;
 extern INTERFACE DISPATCHER<LANGUAGE> language_dispatcher;
 extern INTERFACE DISPATCHER<FUNCTION> function_dispatcher;
+extern INTERFACE DISPATCHER<FUNCTION> measure_dispatcher;
 
 class LOGIC_NODE;
 extern INTERFACE std::string head;
-extern INTERFACE LOGIC_NODE* nstat;
+extern LOGIC_NODE* nstat;

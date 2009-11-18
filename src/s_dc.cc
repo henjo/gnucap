@@ -1,4 +1,4 @@
-/*$Id: s_dc.cc,v 26.105 2008/12/03 07:18:01 al Exp $ -*- C++ -*-
+/*$Id: s_dc.cc,v 26.126 2009/10/16 05:29:28 al Exp $ -*- C++ -*-
  * Copyright (C) 2001 Albert Davis
  * Author: Albert Davis <aldavis@gnu.org>
  *
@@ -25,7 +25,6 @@
 #include "u_prblst.h"
 #include "u_cardst.h"
 #include "e_elemnt.h"
-#include "globals.h"
 /*--------------------------------------------------------------------------*/
 namespace {
 /*--------------------------------------------------------------------------*/
@@ -140,7 +139,8 @@ void DCOP::finish(void)
     if (exists(_zap[ii])) { // component
       _stash[ii].restore();
       _zap[ii]->dec_probes();
-      _zap[ii]->precalc();
+      _zap[ii]->precalc_first();
+      _zap[ii]->precalc_last();
     }else{
     }
   }
@@ -335,8 +335,6 @@ void DCOP::options(CS& Cmd, int Nest)
 /*--------------------------------------------------------------------------*/
 void DCOP::sweep()
 {
-  assert(nstat);
-
   head(_start[0], _stop[0], " ");
   bypass_ok = false;
   set_inc_mode_bad();
@@ -362,7 +360,7 @@ void DCOP::sweep_recursive(int Nest)
   do {
     temp_c = temp_c_in;
     if (Nest == 0) {
-      int converged = solve(itl,_trace);
+      int converged = solve_with_homotopy(itl,_trace);
       if (!converged) {itested();
 	error(bWARNING, "did not converge\n");
       }else{

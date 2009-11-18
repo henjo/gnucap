@@ -1,4 +1,4 @@
-/*$Id: m_expression.h,v 26.89 2008/07/22 21:34:52 al Exp $ -*- C++ -*-
+/*$Id: m_expression.h,v 26.127 2009/11/09 16:06:11 al Exp $ -*- C++ -*-
  * Copyright (C) 2003 Albert Davis
  * Author: Albert Davis <aldavis@gnu.org>
  *
@@ -20,10 +20,11 @@
  * 02110-1301, USA.
  *------------------------------------------------------------------
  */
+//testing=script 2009.08.12
 #include "m_base.h"
 /*--------------------------------------------------------------------------*/
 class Symbol_Table;
-class PARAM_LIST;
+class CARD_LIST;
 class Expression;
 /*--------------------------------------------------------------------------*/
 class Token
@@ -35,7 +36,7 @@ private:
   std::string _aRgs;
 public:
   void parse(CS&) {unreachable();}
-private:
+public:
   void dump(std::ostream&)const;
 protected:
   explicit Token(const std::string Name, const Base* Data, const std::string Args)
@@ -43,14 +44,14 @@ protected:
   explicit Token(const Token& P)
     : Base(), _name(P._name), _data(P._data), _aRgs(P._aRgs) {assert(!_data);}
 public:
-  virtual ~Token() {if (_data) {delete _data;}else{}}
+  virtual ~Token()   {if (_data) {delete _data;}else{}}
   virtual Token*     clone()const = 0;
   const std::string& name()const {return _name;}
   const Base*	     data()const {return _data;}
   const std::string& aRgs()const {return _aRgs;}
   const std::string  full_name()const {return name() + aRgs();}
   virtual void	     stack_op(Expression*)const {unreachable();}
-  bool operator==(const Token& P) {return (typeid(*this)==typeid(P))
+  bool operator==(const Token& P) {untested();return (typeid(*this)==typeid(P))
       && (data()==P.data()) && (name()==P.name()) && (aRgs()==P.aRgs());}
 };
 /*--------------------------------------------------------------------------*/
@@ -58,16 +59,16 @@ class Token_SYMBOL : public Token
 {
 public:
   explicit Token_SYMBOL(const std::string Name, const std::string Args)
-    : Token(Name, NULL, Args) {}    
-  explicit Token_SYMBOL(const Token_SYMBOL& P) : Token(P) {}
-  Token* clone()const {return new Token_SYMBOL(*this);}
+    : Token(Name, NULL, Args) {}
+  explicit Token_SYMBOL(const Token_SYMBOL& P) : Token(P) {untested();}
+  Token* clone()const {untested();return new Token_SYMBOL(*this);}
   void stack_op(Expression*)const;
 };
 class Token_BINOP : public Token
 {
 public:
   explicit Token_BINOP(const std::string Name)
-    : Token(Name, NULL, "") {}    
+    : Token(Name, NULL, "") {}
   explicit Token_BINOP(const Token_BINOP& P) : Token(P) {}
   Token* clone()const {return new Token_BINOP(*this);}
   Token* op(const Token* t1, const Token* t2)const;
@@ -77,7 +78,7 @@ class Token_STOP : public Token
 {
 public:
   explicit Token_STOP(const std::string Name)
-    : Token(Name, NULL, "") {}    
+    : Token(Name, NULL, "") {}
   explicit Token_STOP(const Token_STOP& P) : Token(P) {}
   Token* clone()const {return new Token_STOP(*this);}
   void stack_op(Expression*)const;
@@ -86,18 +87,18 @@ class Token_PARLIST : public Token
 {
 public:
   explicit Token_PARLIST(const std::string Name)
-    : Token(Name, NULL, "") {}    
-  explicit Token_PARLIST(const Token_PARLIST& P) : Token(P) {}
-  Token* clone()const {return new Token_PARLIST(*this);}
+    : Token(Name, NULL, "") {}
+  explicit Token_PARLIST(const Token_PARLIST& P) : Token(P) {untested();}
+  Token* clone()const {untested();return new Token_PARLIST(*this);}
   void stack_op(Expression*)const;
 };
 class Token_UNARY : public Token
 {
 public:
   explicit Token_UNARY(const std::string Name)
-    : Token(Name, NULL, "") {}    
-  explicit Token_UNARY(const Token_UNARY& P) : Token(P) {}
-  Token* clone()const {return new Token_UNARY(*this);}
+    : Token(Name, NULL, "") {}
+  explicit Token_UNARY(const Token_UNARY& P) : Token(P) {untested();}
+  Token* clone()const {untested();return new Token_UNARY(*this);}
   Token* op(const Token* t1)const;
   void stack_op(Expression*)const;
 };
@@ -105,17 +106,17 @@ class Token_CONSTANT : public Token
 {
 public:
   explicit Token_CONSTANT(const std::string Name, const Base* Data, const std::string Args)
-    : Token(Name, Data, Args) {}    
-  explicit Token_CONSTANT(const Token_CONSTANT& P) : Token(P) {}
-  Token* clone()const {return new Token_CONSTANT(*this);}
+    : Token(Name, Data, Args) {}
+  explicit Token_CONSTANT(const Token_CONSTANT& P) : Token(P) {untested();}
+  Token* clone()const {untested();return new Token_CONSTANT(*this);}
   void stack_op(Expression*)const;
 };
 /*--------------------------------------------------------------------------*/
-class Expression
+class INTERFACE Expression
   :public List_Base<Token>
 {
 public:
-  PARAM_LIST* _params;
+  const CARD_LIST* _scope;
 public:
   void parse(CS&);
   void dump(std::ostream&)const;
@@ -135,14 +136,14 @@ private: // expression-in.cc
   void exptail(CS& File);
   void expression(CS& File);
 public:
-  explicit Expression() : _params(NULL) {}
-  explicit Expression(CS& File) : _params(NULL) {parse(File);}
+  explicit Expression() : _scope(NULL) {untested();}
+  explicit Expression(CS& File) : _scope(NULL) {parse(File);}
 private: // expression-reduce.cc
   void reduce_copy(const Expression&);
 public:
-  explicit Expression(const Expression&, PARAM_LIST*);
+  explicit Expression(const Expression&, const CARD_LIST*);
 public: // other
-  bool as_bool()const {return (!is_empty() && back()->data());}
+  bool as_bool()const {untested();return (!is_empty() && back()->data());}
   double eval()const {
     const Float* f = dynamic_cast<const Float*>(back()->data());
     return ((f && size()==1) ? (f->value()) : (NOT_INPUT));

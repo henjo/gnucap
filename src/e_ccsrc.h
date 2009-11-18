@@ -1,4 +1,4 @@
-/*$Id: e_ccsrc.h,v 26.96 2008/10/09 05:36:27 al Exp $ -*- C++ -*-
+/*$Id: e_ccsrc.h,v 26.126 2009/10/16 05:29:28 al Exp $ -*- C++ -*-
  * Copyright (C) 2001 Albert Davis
  * Author: Albert Davis <aldavis@gnu.org>
  *
@@ -35,7 +35,6 @@ protected:
     :ELEMENT(p), _input_label(p._input_label), _input(p._input) {}
   ~CCSRC_BASE() {}
 protected: // override virtual
-  int	   stop_nodes()const	{return 2;}
   int	   max_nodes()const	{return 3;}
   int	   ext_nodes()const	{return 4;}
   int	   min_nodes()const	{return 3;}
@@ -43,8 +42,9 @@ protected: // override virtual
   int	   net_nodes()const	{return 2;}
   int	   num_current_ports()const {return 1;}
   const std::string current_port_value(int)const {return _input_label;};
+  //void   precalc_first();	//ELEMENT
   void	   expand_last();
-  //void   precalc();		//ELEMENT
+  //void   precalc_last();	//ELEMENT
   bool	   tr_needs_eval()const	{assert(!is_q_for_eval()); return true;}
   //void   tr_queue_eval()	//ELEMENT
   void	   tr_unload()		{untested(); tr_unload_active();}
@@ -53,7 +53,6 @@ protected: // override virtual
   double   tr_involts_limited()const {return volts_limited(_n[IN1],_n[IN2]);}
   double   tr_input_limited()const {return _input->tr_amps();}
   COMPLEX  ac_involts()const	{untested();return _n[IN1]->vac()-_n[IN2]->vac();}
-  bool	   is_2port()const	{untested();return true;}  
   void	   set_port_by_index(int index, std::string& value);
   bool	   node_is_connected(int i)const;
 public:

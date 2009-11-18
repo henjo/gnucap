@@ -1,4 +1,4 @@
-/*$Id: bm_sffm.cc,v 26.93 2008/08/29 14:01:28 al Exp $ -*- C++ -*-
+/*$Id: bm_sffm.cc,v 26.127 2009/11/09 16:06:11 al Exp $ -*- C++ -*-
  * Copyright (C) 2001 Albert Davis
  * Author: Albert Davis <aldavis@gnu.org>
  *
@@ -24,7 +24,6 @@
 //testing=script 2005.10.07
 #include "l_denoise.h"
 #include "u_lang.h"
-#include "globals.h"
 #include "bm.h"
 /*--------------------------------------------------------------------------*/
 namespace {
@@ -58,9 +57,10 @@ private: // override vitrual
   COMMON_COMPONENT* clone()const	{return new EVAL_BM_SFFM(*this);}
   void		print_common_obsolete_callback(OMSTREAM&, LANGUAGE*)const;
 
-  //void  	expand(const COMPONENT*);//COMPONENT_COMMON/nothing
-  //COMMON_COMPONENT* deflate();	 //COMPONENT_COMMON/nothing
-  void		precalc(const CARD_LIST*);
+  void		precalc_first(const CARD_LIST*);
+  //void  	expand(const COMPONENT*);	//COMPONENT_COMMON/nothing
+  //COMMON_COMPONENT* deflate();		//COMPONENT_COMMON/nothing
+  //void	precalc_last(const CARD_LIST*);	//COMPONENT_COMMON
 
   void		tr_eval(ELEMENT*)const;
   //void	ac_eval(ELEMENT*)const; //EVAL_BM_ACTION_BASE
@@ -136,10 +136,10 @@ void EVAL_BM_SFFM::print_common_obsolete_callback(OMSTREAM& o, LANGUAGE* lang)co
   EVAL_BM_ACTION_BASE::print_common_obsolete_callback(o, lang);
 }
 /*--------------------------------------------------------------------------*/
-void EVAL_BM_SFFM::precalc(const CARD_LIST* Scope)
+void EVAL_BM_SFFM::precalc_first(const CARD_LIST* Scope)
 {
   assert(Scope);
-  EVAL_BM_ACTION_BASE::precalc(Scope);
+  EVAL_BM_ACTION_BASE::precalc_first(Scope);
   _offset.e_val(_default_offset, Scope);
   _amplitude.e_val(_default_amplitude, Scope);
   _carrier.e_val(_default_carrier, Scope);

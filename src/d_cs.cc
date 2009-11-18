@@ -1,4 +1,4 @@
-/*$Id: d_cs.cc,v 26.100 2008/11/17 09:11:43 al Exp $ -*- C++ -*-
+/*$Id: d_cs.cc,v 26.127 2009/11/09 16:06:11 al Exp $ -*- C++ -*-
  * Copyright (C) 2001 Albert Davis
  * Author: Albert Davis <aldavis@gnu.org>
  *
@@ -23,7 +23,6 @@
  * x = 0, y.f0 = nothing, ev = y.f1 = amps.
  */
 //testing=script 2006.07.17
-#include "globals.h"
 #include "e_elemnt.h"
 /*--------------------------------------------------------------------------*/
 namespace {
@@ -43,10 +42,12 @@ private: // override virtual
   int	   net_nodes()const	{return 2;}
   bool	   is_source()const	{return true;}
   bool	   f_is_value()const	{return true;}
+  bool	   has_iv_probe()const  {return true;}
   bool	   use_obsolete_callback_parse()const {return true;}
   CARD*	   clone()const		{return new DEV_CS(*this);}
+  //void   precalc_first();	//COMPONENT
   //void   expand();		//COMPONENT
-  void     precalc();
+  void     precalc_last();
   //void   map_nodes();		//ELEMENT
 
   void	   tr_iwant_matrix()	{/* nothing */}
@@ -86,9 +87,9 @@ private: // override virtual
 };
 /*--------------------------------------------------------------------------*/
 /*--------------------------------------------------------------------------*/
-void DEV_CS::precalc()
+void DEV_CS::precalc_last()
 {
-  ELEMENT::precalc();
+  ELEMENT::precalc_last();
   set_constant(!has_tr_eval());
   set_converged(!has_tr_eval());
 }

@@ -1,4 +1,4 @@
-/*$Id: s_tr_set.cc,v 26.105 2008/12/03 07:18:01 al Exp $ -*- C++ -*-
+/*$Id: s_tr_set.cc,v 26.113 2009/08/12 03:37:19 al Exp $ -*- C++ -*-
  * Copyright (C) 2001 Albert Davis
  * Author: Albert Davis <aldavis@gnu.org>
  *
@@ -44,7 +44,7 @@ void TRANSIENT::setup(CS& Cmd)
     Cmd >> arg1;
     if (Cmd.match1("'\"({") || Cmd.is_float()) {
       Cmd >> arg2;
-    }else{untested();
+    }else{itested();
     }
     if (Cmd.match1("'\"({") || Cmd.is_float()) {
       Cmd >> arg3;
@@ -90,14 +90,14 @@ void TRANSIENT::setup(CS& Cmd)
 	_tstop  = arg2;
 	_tstep  = arg1;
       }
-    }else{untested();
+    }else{itested();
       assert(arg1.has_hard_value());
       arg1.e_val(0.,_scope);
       if (arg1 > last_time) {untested();	    /* 1 arg: _tstop */
 	_tstart = last_time;
 	_tstop  = arg1;
 	/* _tstep unchanged */
-      }else if (arg1 == 0.) {untested();	    /* 1 arg: _tstart */
+      }else if (arg1 == 0.) {itested();	    /* 1 arg: _tstart */
 	double oldrange = _tstop - _tstart;
 	_tstart = 0.;
 	_tstop  = oldrange;
@@ -192,7 +192,6 @@ void TRANSIENT::options(CS& Cmd)
 	   || Set(Cmd, "v{erbose}",   &_trace, tVERBOSE)
 	   || Cmd.warn(bWARNING, "need none, off, warnings, alltime, "
 		       "rejected, iterations, verbose")
-	   
 	   )
 	  )
       || outset(Cmd,&_out)

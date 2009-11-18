@@ -1,4 +1,4 @@
-/*$Id: e_node.cc,v 26.106 2008/12/13 00:48:28 al Exp $ -*- C++ -*-
+/*$Id: e_node.cc,v 26.112 2009/07/24 00:10:32 al Exp $ -*- C++ -*-
  * Copyright (C) 2001 Albert Davis
  * Author: Albert Davis <aldavis@gnu.org>
  *
@@ -163,6 +163,13 @@ node_t& node_t::operator=(const node_t& p)
   _ttt = p._ttt;
   _m   = p._m;
   return *this;
+}
+/*--------------------------------------------------------------------------*/
+LOGIC_NODE& node_t::data()const
+{
+  extern LOGIC_NODE*nstat;
+  assert(nstat);
+  return nstat[m_()];
 }
 /*--------------------------------------------------------------------------*/
 double NODE::tr_probe_num(const std::string& x)const

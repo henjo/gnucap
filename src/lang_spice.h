@@ -1,4 +1,4 @@
-/*$Id: lang_spice.h,v 26.85 2008/06/19 05:01:15 al Exp $ -*- C++ -*-
+/*$Id: lang_spice.h,v 26.111 2009/06/11 04:20:10 al Exp $ -*- C++ -*-
  * Copyright (C) 2006 Albert Davis
  * Author: Albert Davis <aldavis@gnu.org>
  *
@@ -47,7 +47,7 @@ private: // local
   void parse_type(CS&, CARD*);
   void parse_args(CS&, CARD*);
   void parse_label(CS&, CARD*);
-  void parse_ports(CS&, CARD*, int minnodes, int start, int num_nodes, bool all_new);
+  void parse_ports(CS&, COMPONENT*, int minnodes, int start, int num_nodes, bool all_new);
 private: // compatibility hacks
   void parse_element_using_obsolete_callback(CS&, COMPONENT*);
   void parse_logic_using_obsolete_callback(CS&, COMPONENT*);

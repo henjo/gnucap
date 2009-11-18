@@ -1,4 +1,4 @@
-/*$Id: measure_slewrate.cc,v 26.89 2008/07/22 21:34:52 al Exp $ -*- C++ -*-
+/*$Id: measure_slewrate.cc,v 26.125 2009/10/15 20:58:21 al Exp $ -*- C++ -*-
  * Copyright (C) 2008 Albert Davis
  * Author: Albert Davis <aldavis@gnu.org>
  *
@@ -21,7 +21,6 @@
  *------------------------------------------------------------------
  */
 #include "u_parameter.h"
-#include "globals.h"
 #include "s__.h"
 #include "m_wave.h"
 #include "u_function.h"
@@ -30,7 +29,7 @@ namespace {
 /*--------------------------------------------------------------------------*/
 class MEASURE : public FUNCTION {
 public:
-  std::string eval(CS& Cmd, CARD_LIST* Scope)const
+  std::string eval(CS& Cmd, const CARD_LIST* Scope)const
   {
     std::string probe_name;
     PARAMETER<double> before(BIGBIG);
@@ -137,8 +136,8 @@ public:
       if (stop_time < BIGBIG) {
 	assert(stop_time > start_time);
 	if (expression) {
-	  return "{(" + to_string(stop_val) + "-" + to_string(start_val) + ")/(" 
-	    + to_string(stop_time) + "-" + to_string(start_time) + ")}";
+	  return "((" + to_string(stop_val) + "-" + to_string(start_val) + ")/(" 
+	    + to_string(stop_time) + "-" + to_string(start_time) + "))";
 	}else{
 	  return to_string((stop_val-start_val)/(stop_time-start_time));
 	}
@@ -150,7 +149,7 @@ public:
     }
   }
 } p3;
-DISPATCHER<FUNCTION>::INSTALL d3(&function_dispatcher, "ddt|slewrate|slope", &p3);
+DISPATCHER<FUNCTION>::INSTALL d3(&measure_dispatcher, "ddt|slewrate|slope", &p3);
 /*--------------------------------------------------------------------------*/
 }
 /*--------------------------------------------------------------------------*/

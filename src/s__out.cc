@@ -1,4 +1,4 @@
-/*$Id: s__out.cc,v 26.91 2008/08/10 05:56:16 al Exp $ -*- C++ -*-
+/*$Id: s__out.cc,v 26.110 2009/05/28 15:32:04 al Exp $ -*- C++ -*-
  * Copyright (C) 2001 Albert Davis
  * Author: Albert Davis <aldavis@gnu.org>
  *
@@ -124,7 +124,7 @@ void SIM::alarm(void)
   }
 }
 /*--------------------------------------------------------------------------*/
-/* SIM::store: a stub: will be store data in preparation for post processing
+/* SIM::store: store data in preparation for post processing
  */
 void SIM::store_results(double x)
 {

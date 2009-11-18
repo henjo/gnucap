@@ -1,4 +1,4 @@
-/*$Id: bm_value.cc,v 26.93 2008/08/29 14:01:28 al Exp $ -*- C++ -*-
+/*$Id: bm_value.cc,v 26.127 2009/11/09 16:06:11 al Exp $ -*- C++ -*-
  * Copyright (C) 2001 Albert Davis
  * Author: Albert Davis <aldavis@gnu.org>
  *
@@ -23,7 +23,6 @@
  * used with tc, etc, and conditionals
  */
 //testing=script 2005.10.07
-#include "globals.h"
 #include "bm.h"
 /*--------------------------------------------------------------------------*/
 const double _default_value (0);
@@ -64,11 +63,10 @@ void EVAL_BM_VALUE::print_common_obsolete_callback(OMSTREAM& o, LANGUAGE* lang)c
   EVAL_BM_ACTION_BASE::print_common_obsolete_callback(o, lang);
 }
 /*--------------------------------------------------------------------------*/
-void EVAL_BM_VALUE::precalc(const CARD_LIST* Scope)
+void EVAL_BM_VALUE::precalc_first(const CARD_LIST* Scope)
 {
   assert(Scope);
-
-  EVAL_BM_ACTION_BASE::precalc(Scope);
+  EVAL_BM_ACTION_BASE::precalc_first(Scope);
   if (modelname() != "") {
     _value = modelname();
   }

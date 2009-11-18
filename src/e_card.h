@@ -1,4 +1,4 @@
-/*$Id: e_card.h,v 26.109 2009/02/02 06:39:10 al Exp $ -*- C++ -*-
+/*$Id: e_card.h,v 26.127 2009/11/09 16:06:11 al Exp $ -*- C++ -*-
  * Copyright (C) 2001 Albert Davis
  * Author: Albert Davis <aldavis@gnu.org>
  *
@@ -52,9 +52,9 @@ public:
   //--------------------------------------------------------------------
 public:   				// traversal functions
   CARD* find_in_my_scope(const std::string& name);
-  const CARD* find_in_parent_scope(const std::string& name, int warn)const;
-  const CARD* find_looking_out(const std::string& name, int warn)const;
-  const CARD* find_looking_out(CS& cmd, int warn)const;
+  const CARD* find_in_my_scope(const std::string& name)const;
+  const CARD* find_in_parent_scope(const std::string& name)const;
+  const CARD* find_looking_out(const std::string& name)const;
   //--------------------------------------------------------------------
 public:					// virtuals. -- the important stuff
   virtual bool use_obsolete_callback_parse()const {return false;}
@@ -63,10 +63,11 @@ public:					// virtuals. -- the important stuff
   virtual char	 id_letter()const	{unreachable(); return '\0';}
   virtual CARD*	 clone()const		{unreachable(); return NULL;}
   virtual CARD*	 clone_instance()const  {itested(); return clone();}
+  virtual void	 precalc_first()	{}
   virtual void	 expand_first()		{}
   virtual void	 expand()		{}
   virtual void	 expand_last()		{}
-  virtual void	 precalc()		{}
+  virtual void	 precalc_last()		{}
   virtual void	 map_nodes()		{}
   virtual void	 tr_iwant_matrix()	{}
   virtual void	 tr_begin()		{}
@@ -109,19 +110,9 @@ public:					// query functions. deferred inline
   bool	evaluated()const;
   //--------------------------------------------------------------------
 public:					// query functions. virtual constant
-  virtual int	max_nodes()const	{unreachable(); return 0;}
-  virtual int	ext_nodes()const	{return max_nodes();}
-  virtual int	min_nodes()const	{unreachable(); return 0;}
-  virtual int	matrix_nodes()const	{return 0;}
   virtual int	net_nodes()const	{untested();return 0;}
-  virtual int	int_nodes()const	{return 0;}
-  virtual bool	is_2port()const		{return false;}
-  virtual bool	is_source()const	{return false;}
-  virtual bool	f_is_value()const	{return false;}
   virtual bool	is_device()const	{return false;}
   virtual bool	makes_own_scope()const  {return false;}
-  virtual bool	has_inode()const	{return false;}
-  virtual bool	has_iprobe()const	{untested(); return false;}
   //--------------------------------------------------------------------
 public:					// query functions.
   CARD_LIST*	     subckt()		{return _subckt;}
@@ -131,6 +122,7 @@ public:					// query functions.
   bool		     is_constant()const	{return _constant;}
   bool	node_is_grounded(int i)const;
   virtual bool	     node_is_connected(int i)const;
+  bool		     is_first_expand()const;
   //--------------------------------------------------------------------
 public:					// modifiers.
   virtual void set_slave()	{untested(); assert(!subckt());}
@@ -152,28 +144,21 @@ public:	// label -- in BASE
   /*virtual*/ const std::string long_label()const; // no further override
   //--------------------------------------------------------------------
 public:	// ports
-  // bool port_exists(int i)const //COMPONENT
-  virtual std::string port_name(int)const {unreachable(); return "";}
-  // const std::string port_value(int i)const; //COMPONENT
-  virtual void set_port_by_name(std::string& name, std::string& value);
-  virtual void set_port_by_index(int index, std::string& value);
-  void	set_port_to_ground(int index);
-
-  node_t& n_(int i)const;// {untested(); assert(i < matrix_nodes()); return _n[i];}
-
-  // more in COMPONENT
+  node_t& n_(int i)const;
   //--------------------------------------------------------------------
 public: // parameters
-  virtual std::string value_name()const = 0;
-
-  virtual bool param_exists(int i)const {return param_name(i) != "";}
-  virtual bool param_is_printable(int)const;
-  virtual std::string param_name(int)const;
-  virtual std::string param_name(int,int)const;
-  virtual std::string param_value(int)const; 
   virtual void set_param_by_name(std::string, std::string);
-  virtual void set_param_by_index(int, std::string&, int);
-  virtual int param_count()const {return 0;}
+  virtual void set_param_by_index(int i, std::string&, int offset)
+				{untested(); throw Exception_Too_Many(i, 0, offset);}
+  virtual std::string value_name()const = 0;
+  virtual int param_count_dont_print()const	{return 0;}
+  virtual int param_count()const		{return 0;}
+  virtual bool param_is_printable(int)const	{untested(); return false;}
+  virtual std::string param_name(int)const	{return "";}
+  virtual std::string param_name(int i,int j)const {return (j==0) ? param_name(i) : "";}
+  virtual std::string param_value(int)const	{untested(); return "";}
+  virtual std::string param_type(int)const	{incomplete(); return "";}
+  virtual std::string param_default(int)const	{incomplete(); return "";}
   //--------------------------------------------------------------------
 };
 INTERFACE CARD_LIST::fat_iterator findbranch(CS&,CARD_LIST::fat_iterator);

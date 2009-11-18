@@ -1,4 +1,4 @@
-/*$Id: measure_cross.cc,v 26.89 2008/07/22 21:34:52 al Exp $ -*- C++ -*-
+/*$Id: measure_cross.cc,v 26.116 2009/08/18 05:05:06 al Exp $ -*- C++ -*-
  * Copyright (C) 2008 Albert Davis
  * Author: Albert Davis <aldavis@gnu.org>
  *
@@ -21,7 +21,6 @@
  *------------------------------------------------------------------
  */
 #include "u_parameter.h"
-#include "globals.h"
 #include "s__.h"
 #include "m_wave.h"
 #include "u_function.h"
@@ -30,7 +29,7 @@ namespace {
 /*--------------------------------------------------------------------------*/
 class MEASURE : public FUNCTION {
 public:
-  std::string eval(CS& Cmd, CARD_LIST* Scope)const
+  std::string eval(CS& Cmd, const CARD_LIST* Scope)const
   {
     std::string probe_name;
     PARAMETER<double> before(BIGBIG);
@@ -76,7 +75,7 @@ public:
 
       double cross1 = cross * slope;
       enum STAT {WAITING, READY, DONE} stat = WAITING;
-      double x_time = BIGBIG;
+      double x_time = (last) ? -BIGBIG : BIGBIG;
       WAVE::const_iterator begin = lower_bound(w->begin(), w->end(), DPAIR(after, -BIGBIG));
       WAVE::const_iterator end   = upper_bound(w->begin(), w->end(), DPAIR(before, BIGBIG));
       WAVE::const_iterator lower = begin;
@@ -110,7 +109,7 @@ public:
     }
   }
 } p4;
-DISPATCHER<FUNCTION>::INSTALL d4(&function_dispatcher, "cross", &p4);
+DISPATCHER<FUNCTION>::INSTALL d4(&measure_dispatcher, "cross", &p4);
 /*--------------------------------------------------------------------------*/
 }
 /*--------------------------------------------------------------------------*/

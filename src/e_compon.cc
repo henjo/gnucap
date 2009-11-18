@@ -1,4 +1,4 @@
-/*$Id: e_compon.cc,v 26.107 2008/12/19 06:13:23 al Exp $ -*- C++ -*-
+/*$Id: e_compon.cc,v 26.128 2009/11/10 04:22:27 al Exp $ -*- C++ -*-
  * Copyright (C) 2001 Albert Davis
  * Author: Albert Davis <aldavis@gnu.org>
  *
@@ -21,7 +21,7 @@
  *------------------------------------------------------------------
  * Base class for elements of a circuit
  */
-//testing=obsolete
+//testing=script,noswitch 2009.07.13
 #include "u_lang.h"
 #include "e_model.h"
 #include "e_elemnt.h"
@@ -58,28 +58,35 @@ const MODEL_CARD* COMPONENT::find_model(const std::string& modelname)const
 {
   if (modelname == "") {
     throw Exception(long_label() + ": missing args -- need model name");
+    unreachable();
     return NULL;
   }else{
     const CARD* c = NULL;
     {
       int bin_count = 0;
       for (const CARD* Scope = this; Scope && !c; Scope = Scope->owner()) {
-	c = Scope->find_in_parent_scope(modelname, bDEBUG);
-	if (!c) {
+	// start here, looking out
+	try {
+	  c = Scope->find_in_my_scope(modelname);
+	}catch (Exception_Cant_Find& e1) {
 	  // didn't find plain model.  try binned models
 	  bin_count = 0;
 	  for (;;) {
-	    std::string extended_name =
-	      modelname + '.' + to_string(++bin_count);
-	    c = Scope->find_in_parent_scope(extended_name, bDEBUG);
-	    if (!c) {
-	      // didn't find a binned model
+	    // loop over binned models
+	    std::string extended_name = modelname + '.' + to_string(++bin_count);
+	    try {
+	      c = Scope->find_in_my_scope(extended_name);
+	    }catch (Exception_Cant_Find& e2) {
+	      // that's all .. looked at all of them
+	      c = NULL;
 	      break;
 	    }
 	    const MODEL_CARD* m = dynamic_cast<const MODEL_CARD*>(c);
 	    if (m && m->is_valid(this)) {
 	      //matching name and correct bin
 	      break;
+	    }else{
+	      // keep looking
 	    }
 	  }
 	}
@@ -90,18 +97,21 @@ const MODEL_CARD* COMPONENT::find_model(const std::string& modelname)const
 	}else{
 	  throw Exception(long_label() + ": no bins match: " + modelname);
 	}
-	return NULL;
+	unreachable();
+      }else{
       }
     }
     // found something, what is it?
+    assert(c);
     const MODEL_CARD* model = dynamic_cast<const MODEL_CARD*>(c);
-    if (!model) {itested();
+    if (!model) {untested();
       throw Exception_Type_Mismatch(long_label(), modelname, ".model");
     }else if (!model->is_valid(this)) {itested();
       error(bWARNING, long_label() + ", " + modelname
 	   + "\nmodel and device parameters are incompatible, using anyway\n");
     }else{
     }
+    assert(model);
     return model;
   }
 }
@@ -141,6 +151,7 @@ void COMMON_COMPONENT::parse_common_obsolete_callback(CS& cmd) //used
 	parse_numlist(cmd);
 	if (!cmd.skip1b(')')) {untested();
 	  cmd.warn(bWARNING, "need )");
+	}else{
 	}
       }else{				// ( params list params )
 	parse_numlist(cmd);		//BUG//
@@ -148,6 +159,7 @@ void COMMON_COMPONENT::parse_common_obsolete_callback(CS& cmd) //used
       parse_param_list(cmd);
       if (!cmd.skip1b(')')) {untested();
 	cmd.warn(bWARNING, "need )");
+      }else{
       }
     }else{
       // no named args before num list
@@ -158,10 +170,12 @@ void COMMON_COMPONENT::parse_common_obsolete_callback(CS& cmd) //used
 	parse_numlist(cmd);
 	if (!cmd.skip1b(')')) {untested();
 	  cmd.warn(bWARNING, "need )");
+	}else{
 	}
 	parse_param_list(cmd);
 	if (!cmd.skip1b(')')) {untested();
 	  cmd.warn(bWARNING, "need )");
+	}else{
 	}
       }else{				// ( list ...
 	// only one paren
@@ -175,6 +189,7 @@ void COMMON_COMPONENT::parse_common_obsolete_callback(CS& cmd) //used
 	  parse_param_list(cmd);
 	  if (!cmd.skip1b(')')) {
 	    cmd.warn(bWARNING, "need )");
+	  }else{
 	  }
 	}
       }
@@ -188,6 +203,7 @@ void COMMON_COMPONENT::parse_common_obsolete_callback(CS& cmd) //used
 	parse_numlist(cmd);
 	if (!cmd.skip1b(')')) {untested();
 	  cmd.warn(bWARNING, "need )");
+	}else{
 	}
       }else if (!(cmd.is_alpha())) {	// params list params
 	parse_numlist(cmd);
@@ -200,6 +216,7 @@ void COMMON_COMPONENT::parse_common_obsolete_callback(CS& cmd) //used
     parse_param_list(cmd);
     if (cmd.skip1b(')')) {
       cmd.warn(bWARNING, start, "need (");
+    }else{
     }
   }
 }
@@ -262,14 +279,8 @@ std::string COMMON_COMPONENT::param_value(int i)const
   }
 }
 /*--------------------------------------------------------------------------*/
-void COMMON_COMPONENT::precalc(const CARD_LIST* Scope)
+void COMMON_COMPONENT::precalc_first(const CARD_LIST* Scope)
 {
-  if (_model) {
-    MODEL_CARD* m = const_cast<MODEL_CARD*>(_model);
-    assert(m);
-    m->precalc();
-  }else{
-  }
   assert(Scope);
   _tnom_c.e_val(OPT::tnom_c, Scope);
   _dtemp.e_val(0., Scope);
@@ -301,13 +312,13 @@ bool COMMON_COMPONENT::operator==(const COMMON_COMPONENT& x)const
 /*--------------------------------------------------------------------------*/
 void COMMON_COMPONENT::set_param_by_name(std::string Name, std::string Value)
 {
-  if (has_parse_params_obsolete_callback()) {
+  if (has_parse_params_obsolete_callback()) {untested();
     std::string args(Name + "=" + Value);
     CS cmd(CS::_STRING, args); //obsolete_callback
     bool ok = parse_params_obsolete_callback(cmd); //BUG//callback
     if (!ok) {untested();
       throw Exception_No_Match(Name);
-    }else{itested();
+    }else{untested();
     }
   }else{
     //BUG// ugly linear search
@@ -321,6 +332,7 @@ void COMMON_COMPONENT::set_param_by_name(std::string Name, std::string Value)
 	}
       }
     }
+    itested();
     throw Exception_No_Match(Name);
   }
 }
@@ -331,20 +343,19 @@ void COMMON_COMPONENT::set_param_by_name(std::string Name, std::string Value)
 void COMMON_COMPONENT::Set_param_by_name(std::string Name, std::string Value)
 {
   assert(!has_parse_params_obsolete_callback());
-
-    //BUG// ugly linear search
-    for (int i = COMMON_COMPONENT::param_count() - 1;  i >= 0;  --i) {
-      for (int j = 0;  COMMON_COMPONENT::param_name(i,j) != "";  ++j) {
-	if (Umatch(Name, COMMON_COMPONENT::param_name(i,j) + ' ')) {
-	  COMMON_COMPONENT::set_param_by_index(i, Value, 0/*offset*/);
-	  return; //success
-	}else{
-	  //keep looking
-	}
+  
+  //BUG// ugly linear search
+  for (int i = COMMON_COMPONENT::param_count() - 1;  i >= 0;  --i) {
+    for (int j = 0;  COMMON_COMPONENT::param_name(i,j) != "";  ++j) {
+      if (Umatch(Name, COMMON_COMPONENT::param_name(i,j) + ' ')) {
+	COMMON_COMPONENT::set_param_by_index(i, Value, 0/*offset*/);
+	return; //success
+      }else{
+	//keep looking
       }
     }
-    throw Exception_No_Match(Name);
-
+  }
+  throw Exception_No_Match(Name);
 }
 /*--------------------------------------------------------------------------*/
 bool COMMON_COMPONENT::parse_numlist(CS&)
@@ -396,6 +407,47 @@ COMPONENT::~COMPONENT()
   SIM::uninit();
 }
 /*--------------------------------------------------------------------------*/
+void COMPONENT::set_port_by_name(std::string& int_name, std::string& ext_name)
+{itested();
+  for (int i=0; i<max_nodes(); ++i) {itested();
+    if (int_name == port_name(i)) {itested();
+      set_port_by_index(i, ext_name);
+      return;
+    }else{itested();
+    }
+  }
+  untested();
+  throw Exception_No_Match(int_name);
+}
+/*--------------------------------------------------------------------------*/
+void COMPONENT::set_port_by_index(int num, std::string& ext_name)
+{
+  if (num <= max_nodes()) {
+    _n[num].new_node(ext_name, this);
+    if (num+1 > _net_nodes) {
+      // make the list bigger
+      _net_nodes = num+1;
+    }else{itested();
+      // it's already big enough, probably assigning out of order
+    }
+  }else{untested();
+    throw Exception_Too_Many(num, max_nodes(), 0/*offset*/);
+  }
+}
+/*--------------------------------------------------------------------------*/
+void COMPONENT::set_port_to_ground(int num)
+{untested();
+  if (num <= max_nodes()) {untested();
+    _n[num].set_to_ground(this);
+    if (num+1 > _net_nodes) {untested();
+      _net_nodes = num+1;
+    }else{untested();
+    }
+  }else{untested();
+    throw Exception_Too_Many(num, max_nodes(), 0/*offset*/);
+  }
+}
+/*--------------------------------------------------------------------------*/
 void COMPONENT::set_dev_type(const std::string& new_type)
 {
   if (common()) {
@@ -419,14 +471,15 @@ void COMPONENT::print_args_obsolete_callback(OMSTREAM& o, LANGUAGE* lang)const
 }
 /*--------------------------------------------------------------------------*/
 void COMPONENT::deflate_common()
-{
+{untested();
   unreachable();
-  if (has_common()) {
+  if (has_common()) {untested();
     COMMON_COMPONENT* deflated_common = mutable_common()->deflate();
     if (deflated_common != common()) {untested();
       attach_common(deflated_common);
+    }else{untested();
     }
-  }else{
+  }else{untested();
     unreachable();
   }
 }
@@ -446,21 +499,34 @@ void COMPONENT::expand()
   }
 }
 /*--------------------------------------------------------------------------*/
-void COMPONENT::precalc()
+void COMPONENT::precalc_first()
 {
-  CARD::precalc();
+  CARD::precalc_first();
   if (has_common()) {
     try {
-      mutable_common()->precalc(scope());
+      mutable_common()->precalc_first(scope());
     }catch (Exception_Precalc& e) {
       error(bWARNING, long_label() + ": " + e.message());
     }
     _mfactor = common()->mfactor();
-  }else{
+  }else{itested();
   }
   
   _mfactor.e_val(1, scope());
   _value.e_val(0.,scope());
+}
+/*--------------------------------------------------------------------------*/
+void COMPONENT::precalc_last()
+{
+  CARD::precalc_last();
+  if (has_common()) {
+    try {
+      mutable_common()->precalc_last(scope());
+    }catch (Exception_Precalc& e) {
+      error(bWARNING, long_label() + ": " + e.message());
+    }
+  }else{
+  }
 }
 /*--------------------------------------------------------------------------*/
 void COMPONENT::map_nodes()
@@ -469,6 +535,7 @@ void COMPONENT::map_nodes()
   assert(0 <= min_nodes());
   //assert(min_nodes() <= net_nodes());
   assert(net_nodes() <= max_nodes());
+  //assert(ext_nodes() + int_nodes() == matrix_nodes());
 
   for (int ii = 0; ii < ext_nodes()+int_nodes(); ++ii) {
     _n[ii].map();
@@ -498,7 +565,7 @@ void COMPONENT::ac_iwant_matrix()
     assert(matrix_nodes() == 0);
     if (subckt()) {
       subckt()->ac_iwant_matrix();
-    }else{
+    }else{untested();
     }
   }else{
   }
@@ -555,7 +622,7 @@ void COMPONENT::set_param_by_name(std::string Name, std::string Value)
 /*--------------------------------------------------------------------------*/
 void COMPONENT::set_param_by_index(int i, std::string& Value, int offset)
 {
-  if (has_common()) {
+  if (has_common()) {untested();
     COMMON_COMPONENT* c = common()->clone();
     assert(c);
     c->set_param_by_index(i, Value, offset);
@@ -602,9 +669,9 @@ std::string COMPONENT::param_name(int i, int j)const
   }else{
     if (j == 0) {
       return param_name(i);
-    }else if (i >= CARD::param_count()) {
+    }else if (i >= CARD::param_count()) {untested();
       return "";
-    }else{
+    }else{untested();
       return CARD::param_name(i,j);
     }
   }
@@ -632,7 +699,7 @@ const std::string COMPONENT::port_value(int i)const
 }
 /*--------------------------------------------------------------------------*/
 const std::string COMPONENT::current_port_value(int)const 
-{
+{untested();
   unreachable();
   static std::string s;
   return s;
@@ -704,6 +771,7 @@ void COMMON_COMPONENT::detach_common(COMMON_COMPONENT** from)
       trace1("nodelete", (**from)._attach_count);
     }
     *from = NULL;
+  }else{
   }
 }
 /*--------------------------------------------------------------------------*/

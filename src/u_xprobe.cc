@@ -1,4 +1,4 @@
-/*$Id: u_xprobe.cc,v 26.106 2008/12/13 00:48:28 al Exp $ -*- C++ -*-
+/*$Id: u_xprobe.cc,v 26.110 2009/05/28 15:32:04 al Exp $ -*- C++ -*-
  * Copyright (C) 2001 Albert Davis
  * Author: Albert Davis <aldavis@gnu.org>
  *
@@ -47,7 +47,6 @@ double XPROBE::operator()(mod_t m, bool db)const
       rv = real(_value);
       break;
     case mtIMAG:
-      itested();
       rv = imag(_value);
       break;
     }

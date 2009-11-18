@@ -1,4 +1,4 @@
-/*$Id: bm_pwl.cc,v 26.93 2008/08/29 14:01:28 al Exp $ -*- C++ -*-
+/*$Id: bm_pwl.cc,v 26.127 2009/11/09 16:06:11 al Exp $ -*- C++ -*-
  * Copyright (C) 2001 Albert Davis
  * Author: Albert Davis <aldavis@gnu.org>
  *
@@ -23,7 +23,6 @@
  */
 //testing=script 2005.10.06
 #include "u_lang.h"
-#include "globals.h"
 #include "e_elemnt.h"
 #include "m_interp.h"
 #include "bm.h"
@@ -48,9 +47,10 @@ private: // override virtual
   COMMON_COMPONENT* clone()const	{return new EVAL_BM_PWL(*this);}
   void		print_common_obsolete_callback(OMSTREAM&, LANGUAGE*)const;
 
+  void		precalc_first(const CARD_LIST*);
   //void  	expand(const COMPONENT*);//COMPONENT_COMMON/nothing
   //COMMON_COMPONENT* deflate();	 //COMPONENT_COMMON/nothing
-  void		precalc(const CARD_LIST*);
+  void		precalc_last(const CARD_LIST*);
 
   void		tr_eval(ELEMENT*)const;
   //void	ac_eval(ELEMENT*)const; //EVAL_BM_ACTION_BASE
@@ -112,17 +112,28 @@ void EVAL_BM_PWL::print_common_obsolete_callback(OMSTREAM& o, LANGUAGE* lang)con
   EVAL_BM_ACTION_BASE::print_common_obsolete_callback(o, lang);
 }
 /*--------------------------------------------------------------------------*/
-void EVAL_BM_PWL::precalc(const CARD_LIST* Scope)
+void EVAL_BM_PWL::precalc_first(const CARD_LIST* Scope)
 {
   assert(Scope);
-  EVAL_BM_ACTION_BASE::precalc(Scope);
+  EVAL_BM_ACTION_BASE::precalc_first(Scope);
   _delta.e_val(_default_delta, Scope);
   _smooth.e_val(_default_smooth, Scope);
-  double last = -BIGBIG;
+
   for (std::vector<std::pair<PARAMETER<double>,PARAMETER<double> > >::iterator
 	 p = _raw_table.begin();  p != _raw_table.end();  ++p) {
     p->first.e_val(0, Scope);
     p->second.e_val(0, Scope);
+  }
+}
+/*--------------------------------------------------------------------------*/
+void EVAL_BM_PWL::precalc_last(const CARD_LIST* Scope)
+{
+  assert(Scope);
+  EVAL_BM_ACTION_BASE::precalc_last(Scope);
+
+  double last = -BIGBIG;
+  for (std::vector<std::pair<PARAMETER<double>,PARAMETER<double> > >::iterator
+	 p = _raw_table.begin();  p != _raw_table.end();  ++p) {
     if (last > p->first) {
       throw Exception_Precalc("PWL is out of order: (" + to_string(last)
 			      + ", " + to_string(p->first) + ")\n");
@@ -145,6 +156,7 @@ void EVAL_BM_PWL::tr_eval(ELEMENT* d)const
 TIME_PAIR EVAL_BM_PWL::tr_review(COMPONENT* d)
 {
   if (d->is_source()) {
+    // index (x) is time
     ELEMENT* dd = prechecked_cast<ELEMENT*>(d);
     assert(dd);
     double x = dd->_y[0].x + SIM::_dtmin * .01;
@@ -156,6 +168,8 @@ TIME_PAIR EVAL_BM_PWL::tr_review(COMPONENT* d)
     assert(x > lower->first);
     d->_time_by.min_event((x < upper->first) ? upper->first : NEVER);
   }else{untested();
+    // index (x) is input
+    // It's really needed here too, more work needed
   }
 
   return d->_time_by;

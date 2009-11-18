@@ -1,4 +1,4 @@
-/*$Id: u_probe.cc,v 26.99 2008/11/13 17:55:40 al Exp $ -*- C++ -*-
+/*$Id: u_probe.cc,v 26.112 2009/07/24 00:10:32 al Exp $ -*- C++ -*-
  * Copyright (C) 2001 Albert Davis
  * Author: Albert Davis <aldavis@gnu.org>
  *
@@ -21,7 +21,7 @@
  *------------------------------------------------------------------
  * general probe object
  */
-//testing=none
+//testing=script 2009.06.21
 #include "s__.h"
 #include "u_probe.h"
 /*--------------------------------------------------------------------------*/
@@ -61,7 +61,7 @@ PROBE& PROBE::operator=(const PROBE& p)
   _hi   = p._hi;
   if (_brh) {
     _brh->inc_probes();
-  }else{
+  }else{untested();
   }
   return *this;
 }
@@ -96,6 +96,7 @@ const std::string PROBE::label(void)const
 /*--------------------------------------------------------------------------*/
 double PROBE::value(void)const
 {
+  // _brh is either a node or a "branch", which is really any device
   if (_brh) {
     return _brh->probe_num(_what);
   }else{
@@ -111,19 +112,19 @@ double PROBE::probe_node(void)const
     assert(iTOTAL     - sCOUNT == 2);
     assert(iCOUNT     - sCOUNT == 3);
     return ::status.iter[sCOUNT];
-  }else if (Umatch(_what, "bypass ")) {
+  }else if (Umatch(_what, "bypass ")) {untested();
     return OPT::bypass + 10*SIM::bypass_ok;
   }else if (Umatch(_what, "control ")) {
     return ::status.control;
-  }else if (Umatch(_what, "damp ")) {
+  }else if (Umatch(_what, "damp ")) {untested();
     return SIM::damp;
-  }else if (Umatch(_what, "gen{erator} ")) {
+  }else if (Umatch(_what, "gen{erator} ")) {untested();
     return SIM::genout;
-  }else if (Umatch(_what, "hidden ")) {
+  }else if (Umatch(_what, "hidden ")) {untested();
     return ::status.hidden_steps;
-  }else if (Umatch(_what, "temp{erature} ")) {
+  }else if (Umatch(_what, "temp{erature} ")) {untested();
     return SIM::temp_c;
-  }else if (Umatch(_what, "time ")) {
+  }else if (Umatch(_what, "time ")) {untested();
     return SIM::time0;
   }else{
     return NOT_VALID;
