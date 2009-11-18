@@ -1,4 +1,4 @@
-/*$Id: bmm_table.cc,v 26.93 2008/08/29 14:01:28 al Exp $ -*- C++ -*-
+/*$Id: bmm_table.cc,v 26.125 2009/10/15 20:58:21 al Exp $ -*- C++ -*-
  * Copyright (C) 2001 Albert Davis
  * Author: Albert Davis <aldavis@gnu.org>
  *
@@ -24,7 +24,6 @@
  */
 //testing=script 2006.04.18
 #include "u_lang.h"
-#include "globals.h"
 #include "e_elemnt.h"
 #include "m_spline.h"
 #include "e_model.h" 
@@ -74,7 +73,7 @@ public:
   ~MODEL_TABLE();
 private: // override virtual
   std::string dev_type()const		{return "table";}
-  void  precalc();
+  void  precalc_first();
   COMMON_COMPONENT* new_common()const	{return new EVAL_BM_TABLE;}
   CARD* clone()const			{return new MODEL_TABLE(*this);}
 
@@ -117,11 +116,9 @@ bool EVAL_BM_TABLE::operator==(const COMMON_COMPONENT& x)const
 /*--------------------------------------------------------------------------*/
 void EVAL_BM_TABLE::print_common_obsolete_callback(OMSTREAM& o, LANGUAGE* lang)const
 {
-  untested();
   assert(lang);
   o << modelname();
   EVAL_BM_ACTION_BASE::print_common_obsolete_callback(o, lang);
-  untested();
 }
 /*--------------------------------------------------------------------------*/
 void EVAL_BM_TABLE::expand(const COMPONENT* d)
@@ -218,14 +215,17 @@ void MODEL_TABLE::print_args_obsolete_callback(OMSTREAM& o, LANGUAGE* lang)const
   o << ')';
 }
 /*--------------------------------------------------------------------------*/
-void MODEL_TABLE::precalc()
+void MODEL_TABLE::precalc_first()
 {
+  MODEL_CARD::precalc_first();
+
   const CARD_LIST* par_scope = scope();
   assert(par_scope);
-  MODEL_CARD::precalc();
+
   _order.e_val(_default_order, par_scope);
   _below.e_val(_default_below, par_scope);
   _above.e_val(_default_above, par_scope);
+
   {
     double last = -BIGBIG;
     for (std::vector<std::pair<PARAMETER<double>,PARAMETER<double> > >::
@@ -243,6 +243,7 @@ void MODEL_TABLE::precalc()
       last = p->first;
     }
   }
+
   delete _spline;
   double below = _below.has_hard_value() ? _below : NOT_INPUT;
   double above = _above.has_hard_value() ? _above : NOT_INPUT;

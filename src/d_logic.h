@@ -1,4 +1,4 @@
-/*$Id: d_logic.h,v 26.100 2008/11/17 09:11:43 al Exp $ -*- C++ -*-
+/*$Id: d_logic.h,v 26.127 2009/11/09 16:06:11 al Exp $ -*- C++ -*-
  * Copyright (C) 2001 Albert Davis
  * Author: Albert Davis <aldavis@gnu.org>
  *
@@ -56,8 +56,9 @@ private: // override virtuals
   int	   matrix_nodes()const	{return 2;}
   int	   net_nodes()const	{return _net_nodes;}
   CARD*	   clone()const		{return new DEV_LOGIC(*this);}
+  void	   precalc_first() {ELEMENT::precalc_first(); if (subckt()) {subckt()->precalc_first();}}
   void	   expand();
-  void	   precalc() {ELEMENT::precalc(); if (subckt()) {subckt()->precalc();}}
+  void	   precalc_last() {ELEMENT::precalc_last(); if (subckt()) {subckt()->precalc_last();}}
   //void   map_nodes();
 
   void	   tr_iwant_matrix();
@@ -107,15 +108,17 @@ public:
   explicit MODEL_LOGIC(const DEV_LOGIC*);
 	   ~MODEL_LOGIC()		{--_count;}
 private: // override virtuals
-  std::string dev_type()const		{return "logic";}
-  CARD* clone()const		{return new MODEL_LOGIC(*this);}
-  void precalc();
+  std::string	dev_type()const		{return "logic";}
+  CARD*		clone()const		{return new MODEL_LOGIC(*this);}
+  void		precalc_first();
   void		set_param_by_index(int, std::string&, int);
   bool		param_is_printable(int)const;
   std::string	param_name(int)const;
   std::string	param_name(int,int)const;
   std::string	param_value(int)const;
-  int param_count()const {return (13 + MODEL_CARD::param_count());}
+  std::string	param_type(int)const	{incomplete(); return "";}
+  std::string	param_default(int)const {incomplete(); return "";}
+  int		param_count()const	{return (13 + MODEL_CARD::param_count());}
 public:
   static int	count()			{return _count;}
 public:

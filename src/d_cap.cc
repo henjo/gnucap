@@ -1,4 +1,4 @@
-/*$Id: d_cap.cc,v 26.106 2008/12/13 00:48:28 al Exp $ -*- C++ -*-
+/*$Id: d_cap.cc,v 26.111 2009/06/11 04:20:10 al Exp $ -*- C++ -*-
  * Copyright (C) 2001 Albert Davis
  * Author: Albert Davis <aldavis@gnu.org>
  *
@@ -30,7 +30,6 @@
  * m.x = volts, m.c0 = amps,    acg = m.c1 = mhos
  */
 //testing=script 2006.07.17
-#include "globals.h"
 #include "e_storag.h"
 /*--------------------------------------------------------------------------*/
 namespace {
@@ -48,6 +47,7 @@ protected: // override virtual
   int	   min_nodes()const	{return 2;}
   int	   matrix_nodes()const	{return 2;}
   int	   net_nodes()const	{return 2;}
+  bool	   has_iv_probe()const  {return true;}
   bool	   use_obsolete_callback_parse()const {return true;}
   CARD*	   clone()const		{return new DEV_CAPACITANCE(*this);}
   //void   expand();		//COMPONENT
@@ -103,7 +103,7 @@ private: // override virtual
   int	   min_nodes()const	{return 4;}
   int	   matrix_nodes()const	{return 4;}
   int	   net_nodes()const	{return 4;}
-  bool	   is_2port()const	{untested();return true;}
+  bool	   has_iv_probe()const  {untested(); return false;}
   bool	   f_is_value()const	{untested();return true;}
   CARD*	   clone()const		{return new DEV_TRANSCAP(*this);}
   //void   expand();		//COMPONENT
@@ -160,7 +160,7 @@ private: // override virtual
   int	   min_nodes()const	{return 4;}
   int	   matrix_nodes()const	{return 4;}
   int	   net_nodes()const	{return 4;}
-  bool	   is_2port()const	{untested();return true;}
+  bool	   has_iv_probe()const  {untested(); return false;}
   bool	   f_is_value()const	{untested();return true;}
   CARD*	   clone()const		{return new DEV_VCCAP(*this);}
   //void   expand();		//COMPONENT

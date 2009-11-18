@@ -1,4 +1,4 @@
-/*$Id: d_cccs.cc,v 26.100 2008/11/17 09:11:43 al Exp $ -*- C++ -*-
+/*$Id: d_cccs.cc,v 26.127 2009/11/09 16:06:11 al Exp $ -*- C++ -*-
  * Copyright (C) 2001 Albert Davis
  * Author: Albert Davis <aldavis@gnu.org>
  *
@@ -24,7 +24,6 @@
  * Then adjust the gain to account for the sense element.
  */
 //testing=script,complete 2008.10.09
-#include "globals.h"
 #include "e_ccsrc.h"
 /*--------------------------------------------------------------------------*/
 namespace {
@@ -45,8 +44,9 @@ private: // override virtual
   //int	   net_nodes()const	//CCSRC_BASE=2
   bool	   use_obsolete_callback_parse()const {return true;}
   CARD*	   clone()const		{return new DEV_CCCS(*this);}
+  //void   precalc_first();	//ELEMENT
   //void   expand();		//CCSRC_BASE
-  void     precalc();
+  void     precalc_last();
   //void   map_nodes();		//ELEMENT
 
   void	   tr_iwant_matrix()	{tr_iwant_matrix_active();}
@@ -93,9 +93,9 @@ private: // override virtual
 };
 /*--------------------------------------------------------------------------*/
 /*--------------------------------------------------------------------------*/
-void DEV_CCCS::precalc()
+void DEV_CCCS::precalc_last()
 {
-  CCSRC_BASE::precalc();
+  CCSRC_BASE::precalc_last();
   set_converged();
   assert(!is_constant()); /* because of incomplete analysis */
 }
@@ -128,9 +128,10 @@ bool DEV_CCCS::do_tr_last()
   }
   if (_input->has_inode()) {untested();
     // nothing
-  }else{
+  }else if (_input->has_iv_probe()) {
     _m0.c0 += _y[0].f1 * _input->_m0.c0;
     _m0.c1  = _y[0].f1 * (_input->_loss0 + _input->_m0.c1);
+  }else{unreachable();
   }
   store_values();
   q_load();
@@ -157,8 +158,9 @@ void DEV_CCCS::do_ac()
     _acg = _ev * _input->_loss0;/* so load it in 2 pieces		*/
   }else if (_input->has_inode()) {untested();
     _acg = _ev;
-  }else{
+  }else if (_input->has_iv_probe()) {
     _acg = _ev * _input->_acg;
+  }else{unreachable();
   }
 }
 /*--------------------------------------------------------------------------*/

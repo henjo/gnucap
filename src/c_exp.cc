@@ -1,4 +1,4 @@
-/*$Id: c_exp.cc,v 26.89 2008/07/22 21:34:52 al Exp $ -*- C++ -*-
+/*$Id: c_exp.cc,v 26.127 2009/11/09 16:06:11 al Exp $ -*- C++ -*-
  * Copyright (C) 2007 Albert Davis
  * Author: Albert Davis <aldavis@gnu.org>
  *
@@ -33,9 +33,8 @@ public:
   {
     Expression e(cmd);
     cmd.check(bDANGER, "syntax error");
-    Expression r(e, (Scope->params()));
+    Expression r(e, Scope);
     std::cout << e << '=' << r << '\n';
-    //std::cout << r.eval() << '\n';
   }
 } p0;
 DISPATCHER<CMD>::INSTALL d0(&command_dispatcher, "exp|eval", &p0);

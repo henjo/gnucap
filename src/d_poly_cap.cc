@@ -1,4 +1,4 @@
-/*$Id: d_poly_cap.cc,v 26.106 2008/12/13 00:48:28 al Exp $ -*- C++ -*-
+/*$Id: d_poly_cap.cc,v 26.110 2009/05/28 15:32:04 al Exp $ -*- C++ -*-
  * Copyright (C) 2001 Albert Davis
  * Author: Albert Davis <aldavis@gnu.org>
  *
@@ -29,7 +29,6 @@
  * node[2*i] and node[2*i+1] correspond to val[i+1]
  */
 //testing=script 2006.07.17
-#include "globals.h"
 #include "e_storag.h"
 /*--------------------------------------------------------------------------*/
 namespace {

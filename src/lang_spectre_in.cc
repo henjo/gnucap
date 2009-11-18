@@ -1,4 +1,4 @@
-/*$Id: lang_spectre_in.cc,v 26.109 2009/02/02 06:39:10 al Exp $ -*- C++ -*-
+/*$Id: lang_spectre_in.cc,v 26.125 2009/10/15 20:58:21 al Exp $ -*- C++ -*-
  * Copyright (C) 2007 Albert Davis
  * Author: Albert Davis <aldavis@gnu.org>
  *
@@ -40,13 +40,13 @@ static void parse_args(CS& cmd, CARD* x)
   
   unsigned here = 0;
   while (cmd.more() && !cmd.stuck(&here)) {
+    std::string name  = cmd.ctos("=", "", "");
+    cmd >> '=';
+    std::string value = cmd.ctos("", "(", ")");
     try{
-      std::string name, value;
-      cmd >> name >> '=' >> value;
-      std::cout << name << '=' << value << ";\n";
       x->set_param_by_name(name, value);
     }catch (Exception_No_Match&) {untested();
-      cmd.warn(bDANGER, here, "bad parameter, ignored");
+      cmd.warn(bDANGER, here, x->long_label() + ": bad parameter " + name + " ignored");
     }
   }
 }
@@ -59,7 +59,7 @@ static void parse_label(CS& cmd, CARD* x)
   x->set_label(my_name);
 }
 /*--------------------------------------------------------------------------*/
-static void parse_ports(CS& cmd, CARD* x)
+static void parse_ports(CS& cmd, COMPONENT* x)
 {
   assert(x);
 
@@ -188,7 +188,7 @@ std::string LANG_SPECTRE::find_type_in_string(CS& cmd)
   cmd.reset().skipbl();
   unsigned here = 0;
   std::string type;
-  if ((cmd >> "*|//")) {untested();
+  if ((cmd >> "*|//")) {itested();
     assert(here == 0);
     type = "dev_comment";
   }else if ((cmd >> "model |simulator |parameters |subckt ")) {
@@ -200,7 +200,7 @@ std::string LANG_SPECTRE::find_type_in_string(CS& cmd)
     here = cmd.cursor();
     cmd.reset(here);
     cmd >> type;
-  }else if (cmd.reset().scan("=")) {untested();
+  }else if (cmd.reset().scan("=")) {itested();
     // back up two, by starting over
     cmd.reset().skiparg();
     unsigned here1 = cmd.cursor();

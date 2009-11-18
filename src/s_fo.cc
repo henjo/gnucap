@@ -1,4 +1,4 @@
-/*$Id: s_fo.cc,v 26.91 2008/08/10 05:56:16 al Exp $ -*- C++ -*-
+/*$Id: s_fo.cc,v 26.110 2009/05/28 15:32:04 al Exp $ -*- C++ -*-
  * Copyright (C) 2001 Albert Davis
  * Author: Albert Davis <aldavis@gnu.org>
  *
@@ -25,7 +25,6 @@
  */
 //testing=script 2007.11.21
 #include "m_phase.h"
-#include "globals.h"
 #include "declare.h"	/* plclose, plclear, fft */
 #include "u_prblst.h"
 #include "s_tr.h"

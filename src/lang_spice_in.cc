@@ -1,4 +1,4 @@
-/*$Id: lang_spice_in.cc,v 26.107 2008/12/19 06:13:23 al Exp $ -*- C++ -*-
+/*$Id: lang_spice_in.cc,v 26.125 2009/10/15 20:58:21 al Exp $ -*- C++ -*-
  * Copyright (C) 2006 Albert Davis
  * Author: Albert Davis <aldavis@gnu.org>
  *
@@ -145,7 +145,7 @@ static int count_ports(CS& cmd, int maxnodes, int minnodes, int leave_tail, int 
  *	This is used for the header line in .subckt, which starts clean.
  *	The main benefit is to reject duplicates.
  */
-void LANG_SPICE_BASE::parse_ports(CS& cmd, CARD* x, int minnodes,
+void LANG_SPICE_BASE::parse_ports(CS& cmd, COMPONENT* x, int minnodes,
 			     int start, int num_nodes, bool all_new)
 {
   assert(x);
@@ -227,8 +227,9 @@ void LANG_SPICE_BASE::parse_element_using_obsolete_callback(CS& cmd, COMPONENT* 
 
   {
     unsigned here = cmd.cursor();
-    int num_nodes = count_ports(cmd, x->stop_nodes(), 0,  0,   0);
-    //				     max	      min tail already_got
+    int stop_nodes = x->max_nodes() - x->num_current_ports();
+    int num_nodes = count_ports(cmd, stop_nodes, 0,  0,   0);
+    //				     max	 min tail already_got
     cmd.reset(here);
     parse_ports(cmd, x, 0,  0,		num_nodes, false);
     //			min already_got
@@ -348,42 +349,43 @@ void LANG_SPICE_BASE::parse_args(CS& cmd, CARD* x)
   assert(x);
   COMPONENT* xx = dynamic_cast<COMPONENT*>(x);
 
+  cmd >> "params:";	// optional, skip it.
+
   if (!x->use_obsolete_callback_parse()) {
     int paren = cmd.skip1b('(');
-    unsigned here = cmd.cursor();
-    if (xx && cmd.is_float()) {
+    if (xx && cmd.is_float()) {		// simple unnamed value
       std::string value;
       cmd >> value;
       x->set_param_by_name(xx->value_name(), value);
-    }else if (cmd.match1("'{")) {
+    }else if (cmd.match1("'{")) {	// quoted unnamed value
       std::string value;
       cmd >> value; // strips off the quotes
       value = '{' + value + '}'; // put them back
       x->set_param_by_name(xx->value_name(), value);
-    }else{
+    }else{				// only name=value pairs
     }
+    unsigned here = cmd.cursor();
     for (int i=0; ; ++i) {
       if (paren && cmd.skip1b(')')) {
 	break;
       }else if (!cmd.more()) {
 	break;
       }else{
-	std::string Name, value;
-	cmd >> Name >> '=';
-	if (cmd.match1("'{")) {
-	  cmd >> value; // strips off the quotes
-	  value = '{' + value + '}'; // put them back
-	}else{
-	  cmd >> value;
-	}
+	std::string Name  = cmd.ctos("=", "", "");
+	cmd >> '=';
+	std::string value = cmd.ctos(",=;)", "\"'{(", "\"'})");
 	unsigned there = here;
 	if (cmd.stuck(&here)) {untested();
 	  break;
 	}else{
 	  try{
+	    if (value == "") {
+	      cmd.warn(bDANGER, there, x->long_label() + ": " + Name + " has no value?");
+	    }else{
+	    }
 	    x->set_param_by_name(Name, value);
-	  }catch (Exception_No_Match&) {untested();
-	    cmd.warn(bDANGER, there, "bad parameter, ignored");
+	  }catch (Exception_No_Match&) {itested();
+	    cmd.warn(bDANGER, there, x->long_label() + ": bad parameter " + Name + " ignored");
 	  }
 	}
       }
@@ -593,14 +595,16 @@ std::string LANG_SPICE_BASE::find_type_in_string(CS& cmd)
 /*--------------------------------------------------------------------------*/
 void LANG_SPICE::parse_top_item(CS& cmd, CARD_LIST* Scope)
 {
-  cmd.get_line("gnucap-spice>");
-  if ((cmd.is_file())
+  if (0 && cmd.is_file()
+      && cmd.is_first_read()
       && (Scope == &CARD_LIST::card_list)
       && (Scope->is_empty())
-      && (head == "'")) {	//BUG// ugly hack
+      && (head == "'")) {untested();	//BUG// ugly hack
+    cmd.get_line("gnucap-spice-title>");
     head = cmd.fullstring();
     IO::mstdout << head << '\n';
-  }else{
+  }else{itested();
+    cmd.get_line("gnucap-spice>");
     new__instance(cmd, NULL, Scope);
   }
 }

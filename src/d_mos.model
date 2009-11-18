@@ -1,4 +1,4 @@
-/* $Id: d_mos.model,v 26.102 2008/11/26 01:56:15 al Exp $ -*- C++ -*-
+/* $Id: d_mos.model,v 26.110 2009/05/28 15:32:04 al Exp $ -*- C++ -*-
  * Copyright (C) 2001 Albert Davis
  * Author: Albert Davis <aldavis@gnu.org>
  *
@@ -142,8 +142,8 @@ device BUILT_IN_MOS {
     vg = "@n_g[V]";
     vb = "@n_b[V]";
     vs = "@n_s[V]";
-    "i{d}" = "(_Rd) ? @Rd[I] : @Ids[I] - @Cgd[I] + @Ddb[I] * m->polarity";
-    is = "(_Rs) ? @Rs[I] : -@Ids[I] - @Cgs[I] + @Dsb[I] * m->polarity";
+    "i{d}" = "(_Rd) ? @Rd[I] : (@Ids[I] - @Cgd[I] - @Ddb[I] * m->polarity)";
+    is = "(_Rs) ? @Rs[I] : (-@Ids[I] - @Cgs[I] - @Dsb[I] * m->polarity)";
     ig = "@Cgs[I] + @Cgd[I] + @Cgb[I]";
     ib = "- @Ddb[I] * m->polarity - @Dsb[I] * m->polarity - @Cgb[I]";
     ibd = "@Ddb[I]";

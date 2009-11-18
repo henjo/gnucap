@@ -1,4 +1,4 @@
-/*$Id: ap_construct.cc,v 26.83 2008/06/05 04:46:59 al Exp $ -*- C++ -*-
+/*$Id: ap_construct.cc,v 26.117 2009/08/19 15:28:06 al Exp $ -*- C++ -*-
  * Copyright (C) 2001 Albert Davis
  * Author: Albert Davis <aldavis@gnu.org>
  *
@@ -43,7 +43,8 @@ CS::CS(CS::STDIN)
    _begin_match(0),
    _end_match(0),
    _ms(msEXACT),
-   _ok(true)
+   _ok(true),
+   _line_number(0)
 {
 }
 /*--------------------------------------------------------------------------*/
@@ -56,7 +57,8 @@ CS::CS(CS::INC_FILE, const std::string& name)
    _begin_match(0),
    _end_match(0),
    _ms(msEXACT),
-   _ok(true)
+   _ok(true),
+   _line_number(0)
 {
   if (!_file) {itested();
     throw Exception_File_Open(name + ':' + strerror(errno));
@@ -73,7 +75,8 @@ CS::CS(CS::WHOLE_FILE, const std::string& name)
    _begin_match(0),
    _end_match(0),
    _ms(msEXACT),
-   _ok(true)
+   _ok(true),
+   _line_number(0)
 {
   int f = open(name.c_str(), O_RDONLY);
   if (f == EOF) {itested();
@@ -100,7 +103,8 @@ CS::CS(CS::STRING, const std::string& s)
    _begin_match(0),
    _end_match(0),
    _ms(msEXACT),
-   _ok(true)
+   _ok(true),
+   _line_number(0)
 {
 }
 /*--------------------------------------------------------------------------*/
@@ -114,7 +118,8 @@ CS::CS(const CS& p)
    _begin_match(0),
    _end_match(0),
    _ms(p._ms),
-   _ok(p._ok)
+   _ok(p._ok),
+   _line_number(0)
 {untested();
 }
 #endif
@@ -145,12 +150,13 @@ CS& CS::operator=(const CS& p)
 /*--------------------------------------------------------------------------*/
 CS& CS::get_line(const std::string& prompt)
 {
+  ++_line_number;
   if (is_file()) {
     _cmd = getlines(_file);
     _cnt = 0;
     _length = static_cast<unsigned>(_cmd.length());
     _ok = true;
-  }else{
+  }else{itested();
     assert(_file == stdin);
     char cmdbuf[BUFLEN];
     getcmd(prompt.c_str(), cmdbuf, BUFLEN);
@@ -175,7 +181,7 @@ char *getcmd(const char *prompt, char *buffer, int buflen)
 {
   assert(prompt);
   assert(buffer);
-  if (ftell(stdin) == -1) {
+  if (isatty(fileno(stdin))) {
     // stdin is keyboard
 #if defined(HAVE_LIBREADLINE)
     if (OPT::edit) {
@@ -228,12 +234,12 @@ static std::string getlines(FILE *fileptr)
   const int buffer_size = BIGBUFLEN;
   std::string s;
 
-  bool more = true;  // get another line (extend)
-  while (more) {
+  bool need_to_get_more = true;  // get another line (extend)
+  while (need_to_get_more) {
     char buffer[buffer_size+1];
-    char* got = fgets(buffer, buffer_size, fileptr);
-    if (!got) { // probably end of file
-      more = false;
+    char* got_something = fgets(buffer, buffer_size, fileptr);
+    if (!got_something) { // probably end of file
+      need_to_get_more = false;
       if (s == "") {
 	throw Exception_End_Of_Input("");
       }else{untested();
@@ -241,18 +247,22 @@ static std::string getlines(FILE *fileptr)
     }else{
       trim(buffer);
       size_t count = strlen(buffer);
-      if (buffer[count-1] == '\\') {
-	itested();
+      if (buffer[count-1] == '\\') {itested();
 	buffer[count-1] = '\0';
       }else{
-	int c = fgetc(fileptr);
+	// look ahead at next line
+	//int c = fgetc(fileptr);
+	int c;
+	while (isspace(c = fgetc(fileptr))) {
+	  // skip
+	}
 	if (c == '+') {
-	  more = true;
-	}else if (c == '\n') {
-	  more = true;
+	  need_to_get_more = true;
+	}else if (c == '\n') {unreachable();
+	  need_to_get_more = true;
 	  ungetc(c,fileptr);
 	}else{
-	  more = false;
+	  need_to_get_more = false;
 	  ungetc(c,fileptr);
 	}
       }

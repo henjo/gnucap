@@ -1,4 +1,4 @@
-/*$Id: ap.h,v 26.93 2008/08/29 14:01:28 al Exp $  -*- C++ -*-
+/*$Id: ap.h,v 26.125 2009/10/15 20:58:21 al Exp $  -*- C++ -*-
  * Copyright (C) 2001 Albert Davis
  * Author: Albert Davis <aldavis@gnu.org>
  *
@@ -56,6 +56,7 @@ private:
   unsigned  _end_match;
   enum MATCH_STYLE {msEXACT, msIGNORE_CASE} _ms;
   bool _ok;
+  int _line_number;
 public:
   // control
   void set_ignore_case() {untested(); _ms = msIGNORE_CASE;}
@@ -71,7 +72,7 @@ public:
   CS&	      operator=(const CS& p);
   CS&	      get_line(const std::string& prompt);
 	      ~CS()		{if (is_file()) {fclose(_file);}}
-
+  
   // status - non-consuming
   unsigned cursor()const	{return _cnt;}
   bool	stuck(unsigned* last)	{bool ok=*last<_cnt; *last=_cnt; return !ok;}
@@ -89,7 +90,8 @@ public:
   bool	      ns_more()const	{return peek()!='\0';}
   bool	      more()		{skipbl(); return ns_more();}
   bool	      is_end()		{return !more();}
-  bool	      is_file() {return ((_file) && (_file != stdin || ftell(stdin) >= 0));}
+  bool	      is_file()		{return (_file && !isatty(fileno(_file)));}
+  bool	      is_first_read()const {untested(); return (_line_number == 0);}
 
   // control
   CS&	      reset(unsigned c=0) {_cnt=c; _ok=true; return *this;}
@@ -127,7 +129,8 @@ public:
   void        ctostr(char*,int,const std::string&);
   std::string ctos(const std::string& term=",=(){};",
 		   const std::string& b="\"'{",
-		   const std::string& e="\"'}");
+		   const std::string& e="\"'}",
+		   const std::string& trap="");
   std::string get_to(const std::string& term);
 
   // conversions (ap_convert.cc) consumes if successful, sets _ok

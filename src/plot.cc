@@ -1,4 +1,4 @@
-/*$Id: plot.cc,v 26.83 2008/06/05 04:46:59 al Exp $
+/*$Id: plot.cc,v 26.110 2009/05/28 15:32:04 al Exp $
  * (this file is a mess.  it should be redone.)
  */
 //testing=script 2006.07.17
@@ -237,7 +237,7 @@ static void plotarg(
 	double yhi,
 	double zhi)
 {
-  auto char adata[MAXWIDTH+1];     /* actual data. copy emptydata, insert */
+  char adata[MAXWIDTH+1];     /* actual data. copy emptydata, insert */
   char *xxs;				     /* string representation of xx */
   memcpy(adata, emptydata, MAXWIDTH); /* copy prototype */
   xxs = ftos( xx, 11, 5, IO::formaat );

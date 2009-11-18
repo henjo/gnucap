@@ -1,4 +1,4 @@
-/*$Id: u_opt.h,v 26.108 2008/12/23 06:25:41 al Exp $ -*- C++ -*-
+/*$Id: u_opt.h,v 26.127 2009/11/09 16:06:11 al Exp $ -*- C++ -*-
  * Copyright (C) 2001 Albert Davis
  * Author: Albert Davis <aldavis@gnu.org>
  *
@@ -63,17 +63,6 @@ inline OMSTREAM& operator<<(OMSTREAM& o, UNITS t) {
   const std::string s[] = {"si", "spice"};
   return (o << s[t]);
 }
-/*--------------------------------------------------------------------------*/
-/* secant strategy is not implemented but it is a well known
- * method which may sometime be added
- */
-#ifdef KNEECHORD
-enum strategy_t {stNEWTON, stKNEECHORD, stSECANT};
-inline OMSTREAM& operator<<(OMSTREAM& o, strategy_t t) {untested();
-  const std::string s[] = {"newton", "kneechord", "secant"};
-  return (o << s[t]);
-}
-#endif
 /*--------------------------------------------------------------------------*/
 enum {dsINIT=001, dsRANGE=002, dsDEVLIMIT=004, dsDEVREGION=010, dsREVERSE=020};
 /*--------------------------------------------------------------------------*/
@@ -182,9 +171,6 @@ public:
 			    // 6=source stepping iteration limit
 			    // 7=worst case iteration limit
 			    // 8=trace nonconvergence start iteration
-#ifdef KNEECHORD
-  static strategy_t strategy; // What method we use to encourage non-linear devices to converge
-#endif
 };
 /*--------------------------------------------------------------------------*/
 class SET_RUN_MODE {
@@ -195,12 +181,10 @@ public:
   explicit SET_RUN_MODE(RUN_MODE rm)
     :_old_run_mode(ENV::run_mode) 
   {
-    //std::cout << ENV::run_mode << '^' << rm << '\n';
     ENV::run_mode = rm;
   }
   ~SET_RUN_MODE()
   {
-    //std::cout << ENV::run_mode << 'v' << _old_run_mode << '\n';
     ENV::run_mode = _old_run_mode;
   }
 };

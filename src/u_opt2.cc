@@ -1,4 +1,4 @@
-/*$Id: u_opt2.cc,v 26.108 2008/12/23 06:25:41 al Exp $ -*- C++ -*-
+/*$Id: u_opt2.cc,v 26.110 2009/05/28 15:32:04 al Exp $ -*- C++ -*-
  * Copyright (C) 2001 Albert Davis
  * Author: Albert Davis <aldavis@gnu.org>
  *
@@ -201,69 +201,77 @@ bool OPT::set_values(CS& cmd)
 void OPT::print(OMSTREAM& o)
 {
   o.setfloatwidth(7);
+
+  o << "* i/o\n";
   o << ".options";
   o << ((acct)   ?"  acct" :"  noacct");
   o << ((listing)?"  list" :"  nolist");
-  o << ((mod)    ?"  mod"  :"  nomod");
-  o << ((page)   ?"  page" :"  nopage");
-  o << ((node)   ?"  node" :"  nonode");
-  o << ((opts)   ?"  opts" :"  noopts");
+  o << ((clobber) ? "  clobber" : "  noclobber");
+  o << "  out="    << outwidth;
+  o << "  ydivisions=" << ydivisions;
+  o << "  phase="  << phase;
+  o << "  harmonics="   << harmonics;
+  o << ((edit)	?"  edit"    :"  noedit");
+  o << "  language=" << language;
+  o << ((case_insensitive) ?"  insensitive":"  noinsensitive");
+  o << "  units=" << units;
+  o << "  recursion="<< recursion;
+  o << "\n\n";
+
+  o << "* accuracy, i/o\n";
+  o << ".options";
+  o << "  numdgt=" << numdgt;
+  o << "  floor="  << floor;
+  o << "  vfloor=" << vfloor;
+  o << "  roundofftol=" << roundofftol;
+  o << "\n\n";
+
+  o << "* accuracy, tolerances\n";
+  o << ".options";
   o << "  gmin="   << gmin;
-  o << "  bypasstol=" << bypasstol;
-  o << "  loadtol=" << loadtol;
+  o << "  short="  << shortckt;
   o << "  reltol=" << reltol;
   o << "  abstol=" << abstol;
   o << "  vntol="  << vntol;
   o << "  trtol="  << trtol;
   o << "  chgtol=" << chgtol;
   o << "  pivtol=" << pivtol;
-  o << "  pivrel=" << pivrel;
-  o << "  numdgt=" << numdgt;
-  o << "  tnom="   << tnom_c;
-  o << "  cptime=" << cptime;
-  o << "  limtim=" << limtim;
-  o << "  limpts=" << limpts;
-  o << "  lvlcod=" << lvlcod;
-  o << "  lvltim=" << lvltim;
+  o << "  bypasstol=" << bypasstol;
+  o << "  loadtol=" << loadtol;
+  o << "\n\n";
+
+  o << "* accuracy, algorithms\n";
+  o << ".options";
   o << "  method=" << method;
-  o << "  maxord=" << maxord;
-  for (int ii=1;  ii<ITL_COUNT;  ii++) {
-    o << "  itl@" << ii << "=" << itl[ii];
-  }
-  o << "  defl="   << defl;
-  o << "  defw="   << defw;
-  o << "  defad="  << defad;
-  o << "  defas="  << defas;
-  o << ((clobber) ? "  clobber" : "  noclobber");
-  o << "  dampmax="<< dampmax;
-  o << "  dampmin="<< dampmin;
-  o << "  dampstrategy="<< octal(dampstrategy);
-  o << "  floor="  << floor;
-  o << "  vfloor=" << vfloor;
-  o << "  roundofftol=" << roundofftol;
-  o << "  temperature="<< temp_c;
-  o << "  short="  << shortckt;
-  o << "  out="    << outwidth;
-  o << "  ydivisions=" << ydivisions;
-  o << "  phase="  << phase;
-  o << "  order="  << order;
-  o << "  mode="   << mode;
-  o << "  transits=" << transits;
-  o << ((dupcheck) ?"  dupcheck" :"  nodupcheck");
   o << ((bypass)   ?"  bypass"   :"  nobypass");
   o << ((incmode)  ?"  incmode"  :"  noincmode");    
   o << ((lcbypass) ?"  lcbypass" :"  nolcbypass");    
   o << ((lubypass) ?"  lubypass" :"  nolubypass");    
   o << ((fbbypass) ?"  fbbypass" :"  nofbbypass");    
   o << ((traceload)?"  traceload":"  notraceload");    
+  o << "  order="  << order;
+  o << "  mode="   << mode;
+  o << "  transits=" << transits;
+  o << ((quitconvfail)?"  quitconvfail":"  noquitconvfail");
+  o << "\n\n";
+
+  o << "* iteration limiting and heuristics\n";
+  o << ".options";
+  for (int ii=1;  ii<ITL_COUNT;  ii++) {
+    o << "  itl@" << ii << "=" << itl[ii];
+  }
   o << "  itermin="<< itermin;
   o << "  vmax="   << vmax;
   o << "  vmin="   << vmin;
+  o << "  dampmax="<< dampmax;
+  o << "  dampmin="<< dampmin;
+  o << "  dampstrategy="<< octal(dampstrategy);
+  o << "\n\n";
+
+  o << "* time step control\n";
+  o << ".options";
   o << "  dtmin="  << dtmin;
   o << "  dtratio="<< dtratio;
-  o << ((rstray)?"  rstray":"  norstray");
-  o << ((cstray)?"  cstray":"  nocstray");
-  o << "  harmonics="   << harmonics;
   o << "  trstepgrow="  << trstepgrow;
   o << "  trstephold="  << trstephold;
   o << "  trstepshrink="<< trstepshrink;
@@ -272,19 +280,39 @@ void OPT::print(OMSTREAM& o)
   o << "  trstepcoef1="	<< trstepcoef[1];
   o << "  trstepcoef2="	<< trstepcoef[2];
   o << "  trstepcoef3="	<< trstepcoef[3];
+  o << "\n\n";
+
+  o << "* circuit environment\n";
+  o << ".options";
+  o << "  tnom="   << tnom_c;
+  o << "  temperature="<< temp_c;
+  o << ((rstray)?"  rstray":"  norstray");
+  o << ((cstray)?"  cstray":"  nocstray");
+  o << "  defl="   << defl;
+  o << "  defw="   << defw;
+  o << "  defad="  << defad;
+  o << "  defas="  << defas;
   if (diodeflags) {
     o << "  diodeflags="  << octal(diodeflags);
   }
   if (mosflags) {
     o << "  mosflags="    << octal(mosflags);
   }
-  o << ((quitconvfail)?"  quitconvfail":"  noquitconvfail");
-  o << ((edit)	?"  edit"    :"  noedit");
-  o << "  recursion="<< recursion;
-  o << "  language=" << language;
-  o << ((case_insensitive) ?"  insensitive":"  noinsensitive");
-  o << "  units=" << units;
-  o << '\n';
+  o << "\n\n";
+
+  // compatibility options ignored
+  //o << ((mod)    ?"  mod"  :"  nomod");
+  //o << ((page)   ?"  page" :"  nopage");
+  //o << ((node)   ?"  node" :"  nonode");
+  //o << ((opts)   ?"  opts" :"  noopts");
+  //o << ((dupcheck) ?"  dupcheck" :"  nodupcheck");
+  //o << "  maxord=" << maxord;
+  //o << "  cptime=" << cptime;
+  //o << "  limtim=" << limtim;
+  //o << "  limpts=" << limpts;
+  //o << "  lvlcod=" << lvlcod;
+  //o << "  lvltim=" << lvltim;
+  //o << "  pivrel=" << pivrel;
 }
 /*--------------------------------------------------------------------------*/
 /*--------------------------------------------------------------------------*/

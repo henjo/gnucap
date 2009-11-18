@@ -1,4 +1,4 @@
-/*$Id: lang_spice_out.cc,v 26.98 2008/10/24 06:10:07 al Exp $ -*- C++ -*-
+/*$Id: lang_spice_out.cc,v 26.124 2009/09/28 22:59:33 al Exp $ -*- C++ -*-
  * Copyright (C) 2006 Albert Davis
  * Author: Albert Davis <aldavis@gnu.org>
  *
@@ -89,8 +89,7 @@ void LANG_SPICE_BASE::print_args(OMSTREAM& o, const MODEL_CARD* x)
   if (x->use_obsolete_callback_print()) {
     x->print_args_obsolete_callback(o, this);  //BUG//callback//
   }else{
-    //for (int ii = 0;  x->param_exists(ii);  ++ii) {
-    for (int ii = x->param_count() - 1;  ii >= 0;  --ii) {
+    for (int ii = x->param_count() - 1;  ii >= x->param_count_dont_print();  --ii) {
       if (x->param_is_printable(ii)) {
 	std::string arg = " " + x->param_name(ii) + "=" + x->param_value(ii);
 	o << arg;
@@ -119,10 +118,10 @@ void LANG_SPICE_BASE::print_args(OMSTREAM& o, const COMPONENT* x)
   if (x->use_obsolete_callback_print()) {
     x->print_args_obsolete_callback(o, this);  //BUG//callback//
   }else{
-    //for (int ii = 0;  x->param_exists(ii);  ++ii) {
-    for (int ii = x->param_count() - 1;  ii >= 0;  --ii) {
+    for (int ii = x->param_count() - 1;  ii >= x->param_count_dont_print();  --ii) {
       if (x->param_is_printable(ii)) {
 	if ((ii != x->param_count() - 1) || (x->param_name(ii) != x->value_name())) {
+	  // skip name if plain value
 	  o << " " << x->param_name(ii) << "=";
 	}else{
 	}

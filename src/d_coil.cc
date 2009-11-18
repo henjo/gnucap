@@ -1,4 +1,4 @@
-/*$Id: d_coil.cc,v 26.109 2009/02/02 06:39:10 al Exp $ -*- C++ -*-
+/*$Id: d_coil.cc,v 26.127 2009/11/09 16:06:11 al Exp $ -*- C++ -*-
  * Copyright (C) 2001 Albert Davis
  * Author: Albert Davis <aldavis@gnu.org>
  *
@@ -27,7 +27,6 @@
  */
 //testing=script 2008.10.09
 #include "e_subckt.h"
-#include "globals.h"
 #include "e_ccsrc.h"
 #include "e_storag.h"
 /*--------------------------------------------------------------------------*/
@@ -46,14 +45,17 @@ public: // override virtual
   std::string dev_type()const	{return "inductor";}
   int	   max_nodes()const	{return 2;}
   int	   min_nodes()const	{return 2;}
-  int	   matrix_nodes()const	{return (!_c_model) ? 2 : 3;}
   int	   net_nodes()const	{return 2;}
-  int	   int_nodes()const     {return 1;}
+  int	   int_nodes()const     {return (!_c_model) ? 0 : 1;}
+  int	   matrix_nodes()const	{return net_nodes() + int_nodes();}
+
   bool	   has_inode()const	{return _c_model;}
+  bool	   has_iv_probe()const  {return true;}
   bool	   use_obsolete_callback_parse()const {return true;}
   CARD*	   clone()const		{return new DEV_INDUCTANCE(*this);}
+  //void   precalc_first();	//STORAGE
   void     expand();
-  //void   precalc();		//STORAGE
+  //void   precalc_last();	//STORAGE
   //void   map_nodes();		//ELEMENT
 
   void	   tr_iwant_matrix();
@@ -121,17 +123,17 @@ private: // override virtual
   std::string value_name()const {return "k";}
   std::string dev_type()const	{untested(); return "mutual_inductor";}
   int	   max_nodes()const	{return 2;}
-  int	   ext_nodes()const	{return 2;}
   int	   min_nodes()const	{return 2;}
   int	   matrix_nodes()const	{return 2;}
   int	   net_nodes()const	{return 0;}
   int	   num_current_ports()const {return 2;}
-  bool	   is_2port()const	{untested(); return true;}
+  bool	   has_iv_probe()const  {untested(); return false;}
   bool	   use_obsolete_callback_parse()const {return false;}
   CARD*	   clone()const		{return new DEV_MUTUAL_L(*this);}
+  //void   precalc_first();	//STORAGE
   void     expand_first();
   void	   expand_last();
-  void	   precalc();
+  void	   precalc_last();
   //void   map_nodes()		//ELEMENT
 
   void     tr_iwant_matrix()	{tr_iwant_matrix_passive();}
@@ -242,7 +244,7 @@ DEV_MUTUAL_L::DEV_MUTUAL_L(const DEV_MUTUAL_L& p)
 void DEV_INDUCTANCE::expand()
 {
   STORAGE::expand();
-  if (!nstat) {
+  if (is_first_expand()) {
     if (!_c_model) {
       _n[IN1].set_to_ground(this);
     }else{
@@ -252,9 +254,6 @@ void DEV_INDUCTANCE::expand()
   }
 }
 /*--------------------------------------------------------------------------*/
-// replace both primary and secondary (both simple L's)
-// with the CCCS - L equivalent
-// only works for 2.
 void DEV_MUTUAL_L::expand_first()
 {
   _output = dynamic_cast<DEV_INDUCTANCE*>(find_in_my_scope(_output_label));
@@ -275,26 +274,26 @@ void DEV_MUTUAL_L::expand_first()
 void DEV_MUTUAL_L::expand_last()
 {
   STORAGE::expand(); // skip DEV_INDUCTANCE
-  if (!nstat) {
+  if (is_first_expand()) {
     _n[OUT2] = _input->n_(IN1);
     _n[OUT1] = _output->n_(IN1);
   }else{untested();
   }
 }
 /*--------------------------------------------------------------------------*/
-void DEV_MUTUAL_L::precalc()
+void DEV_MUTUAL_L::precalc_last()
 {
-  _output->precalc();
-  _input->precalc();
+  _output->precalc_last();
+  _input->precalc_last();
 
-  DEV_INDUCTANCE::precalc();
+  DEV_INDUCTANCE::precalc_last();
 
   double l1 = _output->value();
   double l2 = _input->value();
   _lm = value() * sqrt(l1 * l2);
   trace3(long_label().c_str(), l1, l2, _lm);
 
-  if (!nstat) {
+  if (is_first_expand()) {
     assert(_y[0].x  == 0.);
     assert(_y[0].f0 == LINEAR);
     _y[0].f1 = -_lm; // override

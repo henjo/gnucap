@@ -1,4 +1,4 @@
-/*$Id: e_ccsrc.cc,v 26.96 2008/10/09 05:36:27 al Exp $ -*- C++ -*-
+/*$Id: e_ccsrc.cc,v 26.124 2009/09/28 22:59:33 al Exp $ -*- C++ -*-
  * Copyright (C) 2001 Albert Davis
  * Author: Albert Davis <aldavis@gnu.org>
  *
@@ -30,25 +30,23 @@ void CCSRC_BASE::expand_last()
 
   if (_input_label != "") {
     _input = dynamic_cast<const ELEMENT*>(find_in_my_scope(_input_label));
-  }else{
+  }else{untested();
     // _input already set, an internal element.  example: mutual L.
   }
 
   if (!_input) {untested();
-    throw Exception(long_label() + ": " + _input_label
-		    + " is not an element, cannot be used as current probe");
-  }else if (_input->is_2port()) {
-    throw Exception(long_label() + ": " + _input_label
-		    + " is 2 port, cannot be used as current probe");
+    throw Exception(long_label() + ": " + _input_label + " cannot be used as current probe");
   }else if (_input->subckt()) {untested();
     throw Exception(long_label() + ": " + _input_label
 		    + " has a subckt, cannot be used as current probe");
-  }else if (_input->has_inode()) {itested();
+  }else if (_input->has_inode()) {untested();
     _n[IN1] = _input->n_(IN1);
     _n[IN2].set_to_ground(this);
-  }else{
+  }else if (_input->has_iv_probe()) {
     _n[IN1] = _input->n_(OUT1);
     _n[IN2] = _input->n_(OUT2);
+  }else{
+    throw Exception(long_label() + ": " + _input_label + " cannot be used as current probe");
   }
 }
 /*--------------------------------------------------------------------------*/

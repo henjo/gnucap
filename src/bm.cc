@@ -1,4 +1,4 @@
-/*$Id: bm.cc,v 26.93 2008/08/29 14:01:28 al Exp $ -*- C++ -*-
+/*$Id: bm.cc,v 26.127 2009/11/09 16:06:11 al Exp $ -*- C++ -*-
  * Copyright (C) 2001 Albert Davis
  * Author: Albert Davis <aldavis@gnu.org>
  *
@@ -22,7 +22,6 @@
  * behavioral modeling action base
  */
 //testing=script 2006.07.13
-#include "globals.h"
 #include "u_lang.h"
 #include "e_elemnt.h"
 #include "bm.h"
@@ -79,6 +78,7 @@ void EVAL_BM_ACTION_BASE::tr_final_adjust(FPOLY1* y, bool f_is_value)const
   if (f_is_value) {
     y->f1 = y->f0;
     y->f0 = 0.;
+  }else{
   }
   *y *= temp_adjust();
   y->f0 += _ooffset;
@@ -92,30 +92,28 @@ void EVAL_BM_ACTION_BASE::tr_finish_tdv(ELEMENT* d, double val)const
 /*--------------------------------------------------------------------------*/
 void EVAL_BM_ACTION_BASE::ac_final_adjust(COMPLEX* y)const
 {
-  if (_bandwidth != NOT_INPUT && _bandwidth != 0.) {
-    untested();
+  if (_bandwidth != NOT_INPUT && _bandwidth != 0.) {untested();
     assert(y->imag() == 0);
     double ratio = SIM::freq / _bandwidth;
     double coeff = y->real() / (1.+(ratio*ratio));
     *y = COMPLEX(coeff, -coeff * ratio);
+  }else{
   }
   
-  if (_phase != 0.) {
-    untested();
+  if (_phase != 0.) {itested();
     *y *= std::polar(1., _phase*DTOR);
+  }else{
   }
 
-  if (_delay != 0.) {
-    untested();
+  if (_delay != 0.) {untested();
     double ratio = SIM::freq * _delay;
-    if (ratio > 100000.) {
-      untested();
+    if (ratio > 100000.) {untested();
       error(bPICKY, "delay too long\n");
       ratio = 0.;
-    }else{
-      untested();
+    }else{untested();
     }
     *y *= std::polar(1., -360.0 * DTOR * ratio);
+  }else{
   }
 }
 /*--------------------------------------------------------------------------*/
@@ -139,8 +137,8 @@ bool EVAL_BM_ACTION_BASE::operator==(const COMMON_COMPONENT& x)const
     && _tc2 == p->_tc2
     && _ic == p->_ic
     && EVAL_BM_BASE::operator==(x);
-  if (rv) {
-    untested();
+  if (rv) {untested();
+  }else{
   }
   return rv;
 }
@@ -159,10 +157,10 @@ void EVAL_BM_ACTION_BASE::print_common_obsolete_callback(OMSTREAM& o, LANGUAGE* 
   COMMON_COMPONENT::print_common_obsolete_callback(o, lang);
 }
 /*--------------------------------------------------------------------------*/
-void EVAL_BM_ACTION_BASE::precalc(const CARD_LIST* Scope)
+void EVAL_BM_ACTION_BASE::precalc_first(const CARD_LIST* Scope)
 {
   assert(Scope);
-  COMMON_COMPONENT::precalc(Scope);
+  COMMON_COMPONENT::precalc_first(Scope);
   _bandwidth.e_val(_default_bandwidth, Scope);
   _delay.e_val(_default_delay, Scope);
   _phase.e_val(_default_phase, Scope);

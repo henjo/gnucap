@@ -1,4 +1,4 @@
-/*$Id: bm_sin.cc,v 26.109 2009/02/02 06:39:10 al Exp $ -*- C++ -*-
+/*$Id: bm_sin.cc,v 26.127 2009/11/09 16:06:11 al Exp $ -*- C++ -*-
  * Copyright (C) 2001 Albert Davis
  * Author: Albert Davis <aldavis@gnu.org>
  *
@@ -23,7 +23,6 @@
  */
 //testing=script,complete 2005.10.07
 #include "u_lang.h"
-#include "globals.h"
 #include "l_denoise.h"
 #include "bm.h"
 /*--------------------------------------------------------------------------*/
@@ -59,9 +58,10 @@ private: // override vitrual
   COMMON_COMPONENT* clone()const	{return new EVAL_BM_SIN(*this);}
   void		print_common_obsolete_callback(OMSTREAM&, LANGUAGE*)const;
 
-  //void  	expand(const COMPONENT*);//COMPONENT_COMMON/nothing
-  //COMMON_COMPONENT* deflate();	 //COMPONENT_COMMON/nothing
-  void		precalc(const CARD_LIST*);
+  void		precalc_first(const CARD_LIST*);
+  //void  	expand(const COMPONENT*);	//COMPONENT_COMMON/nothing
+  //COMMON_COMPONENT* deflate();		//COMPONENT_COMMON/nothing
+  //void	precalc_last(const CARD_LIST*);	//COMPONENT_COMMON
 
   void		tr_eval(ELEMENT*)const;
   //void	ac_eval(ELEMENT*)const; //EVAL_BM_ACTION_BASE
@@ -118,8 +118,8 @@ bool EVAL_BM_SIN::operator==(const COMMON_COMPONENT& x)const
     && _zero == p->_zero
     && _peak == p->_peak
     && EVAL_BM_ACTION_BASE::operator==(x);
-  if (rv) {
-    untested();
+  if (rv) {untested();
+  }else{
   }
   return rv;
 }
@@ -139,10 +139,10 @@ void EVAL_BM_SIN::print_common_obsolete_callback(OMSTREAM& o, LANGUAGE* lang)con
   EVAL_BM_ACTION_BASE::print_common_obsolete_callback(o, lang);
 }
 /*--------------------------------------------------------------------------*/
-void EVAL_BM_SIN::precalc(const CARD_LIST* Scope)
+void EVAL_BM_SIN::precalc_first(const CARD_LIST* Scope)
 {
   assert(Scope);
-  EVAL_BM_ACTION_BASE::precalc(Scope);
+  EVAL_BM_ACTION_BASE::precalc_first(Scope);
   _offset.e_val(_default_offset, Scope);
   _amplitude.e_val(_default_amplitude, Scope);
   _frequency.e_val(_default_frequency, Scope);
@@ -167,8 +167,10 @@ void EVAL_BM_SIN::tr_eval(ELEMENT* d)const
     double x=_amplitude*fixzero(sin(M_TWO_PI*_actual_frequency*(reltime-_delay)),1.);
     if (_damping != 0.) {
       x *= exp(-(reltime-_delay)*_damping);
+    }else{
     }
     ev += x;
+  }else{
   }
   tr_finish_tdv(d, ev);
 }

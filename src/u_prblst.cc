@@ -1,4 +1,4 @@
-/*$Id: u_prblst.cc,v 26.105 2008/12/03 07:18:01 al Exp $ -*- C++ -*-
+/*$Id: u_prblst.cc,v 26.113 2009/08/12 03:37:19 al Exp $ -*- C++ -*-
  * Copyright (C) 2001 Albert Davis
  * Author: Albert Davis <aldavis@gnu.org>
  *
@@ -91,7 +91,7 @@ void PROBELIST::remove_list(CS& cmd)
   if (x != end()) {
     erase(x, end());
   }else{itested();
-    cmd.warn(bWARNING, mark, "no match");
+    cmd.warn(bWARNING, mark, "probe isn't set -- can't remove");
   }
 }
 /*--------------------------------------------------------------------------*/
@@ -258,7 +258,7 @@ bool PROBELIST::add_branches(const std::string&device,
 	  if (i->first != "0") {
 	    NODE* node = i->second;
 	    assert (node);
-	    if (wmatch(node->short_label(), device)) {itested();
+	    if (wmatch(node->short_label(), device)) {
 	      push_new_probe(param, node);
 	      found_something = true;
 	    }else{

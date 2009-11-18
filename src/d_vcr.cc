@@ -1,4 +1,4 @@
-/*$Id: d_vcr.cc,v 26.100 2008/11/17 09:11:43 al Exp $ -*- C++ -*-
+/*$Id: d_vcr.cc,v 26.127 2009/11/09 16:06:11 al Exp $ -*- C++ -*-
  * Copyright (C) 2001 Albert Davis
  * Author: Albert Davis <aldavis@gnu.org>
  *
@@ -25,7 +25,6 @@
  * _loss0 == 1/R. (mhos)
  */
 //testing=script,complete 2006.07.17
-#include "globals.h"
 #include "e_elemnt.h"
 /*--------------------------------------------------------------------------*/
 namespace {
@@ -43,11 +42,11 @@ private: // override virtual
   int	   min_nodes()const	{return 4;}
   int	   matrix_nodes()const	{return 4;}
   int	   net_nodes()const	{return 4;}
-  bool	   is_2port()const	{untested();return true;}
   bool	   use_obsolete_callback_parse()const {return true;}
   CARD*	   clone()const		{return new DEV_VCR(*this);}
+  //void   precalc_first();	//ELEMENT
   //void   expand();		//COMPONENT
-  void     precalc();
+  void     precalc_last();
   //void   map_nodes();		//ELEMENT
 
   void	   tr_iwant_matrix()	{tr_iwant_matrix_extended();}
@@ -88,9 +87,9 @@ private: // override virtual
 };
 /*--------------------------------------------------------------------------*/
 /*--------------------------------------------------------------------------*/
-void DEV_VCR::precalc()
+void DEV_VCR::precalc_last()
 {
-  ELEMENT::precalc();
+  ELEMENT::precalc_last();
   assert(!is_constant());
   set_not_converged();
 }

@@ -1,4 +1,4 @@
-/*$Id: e_elemnt.h,v 26.107 2008/12/19 06:13:23 al Exp $ -*- C++ -*-
+/*$Id: e_elemnt.h,v 26.127 2009/11/09 16:06:11 al Exp $ -*- C++ -*-
  * Copyright (C) 2001 Albert Davis
  * Author: Albert Davis <aldavis@gnu.org>
  *
@@ -43,7 +43,7 @@ public:
   bool	   skip_dev_type(CS&);
 public: // override virtual
   bool	   print_type_in_spice()const {return false;}
-  void	   precalc();
+  void	   precalc_last();
   void	   tr_begin();
   void	   tr_restore();
   void	   dc_advance();
@@ -116,10 +116,6 @@ protected: // inline, below
   bool	   using_ac_eval()const;
   void	   tr_eval();
   void	   ac_eval();
-#ifdef KNEECHORD
-  int      inverse();      // see inverse.cc
-  void     knee_chord();   // see inverse.cc
-#endif
 
 protected: // in .cc
   void	   tr_iwant_matrix_passive();

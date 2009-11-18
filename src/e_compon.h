@@ -1,4 +1,4 @@
-/*$Id: e_compon.h,v 26.107 2008/12/19 06:13:23 al Exp $ -*- C++ -*-
+/*$Id: e_compon.h,v 26.127 2009/11/09 16:06:11 al Exp $ -*- C++ -*-
  * Copyright (C) 2001 Albert Davis
  * Author: Albert Davis <aldavis@gnu.org>
  *
@@ -79,19 +79,21 @@ public:
   virtual void print_common_obsolete_callback(OMSTREAM&, LANGUAGE*)const;
 
   virtual bool has_parse_params_obsolete_callback()const {return false;}
-  virtual bool param_exists(int i)const {return param_name(i) != "";}
   virtual bool param_is_printable(int)const;
   virtual std::string param_name(int)const;
   virtual std::string param_name(int,int)const;
   virtual std::string param_value(int)const;
+  virtual std::string param_type(int)const	{incomplete(); return "";}
+  virtual std::string param_default(int)const	{incomplete(); return "";}
   virtual void set_param_by_name(std::string, std::string);
   void Set_param_by_name(std::string, std::string); //BUG// see implementation
   virtual void set_param_by_index(int, std::string&, int);
   virtual int param_count()const {return 4;}
 public:
-  virtual void expand(const COMPONENT*) {}
-  virtual COMMON_COMPONENT* deflate()	{return this;}
-  virtual void precalc(const CARD_LIST*);
+  virtual void precalc_first(const CARD_LIST*);
+  virtual void expand(const COMPONENT*)		{}
+  virtual COMMON_COMPONENT* deflate()		{return this;}
+  virtual void precalc_last(const CARD_LIST*)	{}
 
   virtual void	tr_eval(ELEMENT*)const;
   virtual void	ac_eval(ELEMENT*)const;
@@ -149,19 +151,25 @@ protected:
 public:
   virtual bool	print_type_in_spice()const = 0;
 
-  //tail_size: minimum number of non-ports following the ports
+  virtual int	max_nodes()const	{unreachable(); return 0;}
+  virtual int	min_nodes()const	{unreachable(); return 0;}
+  virtual int	num_current_ports()const {return 0;}
   virtual int	tail_size()const	{return 0;}
 
-  //stop_nodes: forced stop ports in a netlist, required continue later.
-  virtual int	stop_nodes()const	{return max_nodes();}
+  virtual int	net_nodes()const	{untested();return 0;} //override
+  virtual int	ext_nodes()const	{return max_nodes();}
+  virtual int	int_nodes()const	{return 0;}
+  virtual int	matrix_nodes()const	{return 0;}
 
-  //num_current_ports: current (through) ports .. spice hack
-  virtual int	num_current_ports()const {return 0;}
-
+  virtual bool	has_inode()const	{return false;}
+  virtual bool	has_iv_probe()const	{return false;}
+  virtual bool	is_source()const	{return false;}
+  virtual bool	f_is_value()const	{return false;}
 public: // override virtual
   void  set_dev_type(const std::string& new_type);
+  void	precalc_first();
   void	expand();
-  void	precalc();
+  void	precalc_last();
   bool	is_device()const		{return true;}
   void  map_nodes();
   void  tr_iwant_matrix();
@@ -254,10 +262,11 @@ public:
   //--------------------------------------------------------------------
 public:	// ports
   bool port_exists(int i)const {return i < net_nodes();}
-  //std::string port_name(int)const //CARD
+  virtual std::string port_name(int)const = 0;
   const std::string port_value(int i)const;
-  // void set_port_by_name(std::string& name, std::string& value); //CARD
-  // void set_port_by_index(int index, std::string& value); //CARD
+  virtual void set_port_by_name(std::string& name, std::string& value);
+  virtual void set_port_by_index(int index, std::string& value);
+  void	set_port_to_ground(int index);
 
   bool current_port_exists(int i)const	{return i < num_current_ports();}
   virtual std::string current_port_name(int)const {return "";}
@@ -267,11 +276,12 @@ public:	// ports
 public: // parameters
   void print_args_obsolete_callback(OMSTREAM&, LANGUAGE*)const;
 
-  // bool param_exists(int)const; //CARD
   bool param_is_printable(int)const;
   std::string param_name(int)const;
   std::string param_name(int,int)const;
   std::string param_value(int)const; 
+  std::string param_type(int)const {incomplete(); return "";}
+  std::string param_default(int)const {incomplete(); return "";}
   void set_param_by_name(std::string, std::string);
   void set_param_by_index(int, std::string&, int);
   int param_count()const

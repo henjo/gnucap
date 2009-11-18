@@ -1,4 +1,4 @@
-/*$Id: measure_min.cc,v 26.89 2008/07/22 21:34:52 al Exp $ -*- C++ -*-
+/*$Id: measure_min.cc,v 26.116 2009/08/18 05:05:06 al Exp $ -*- C++ -*-
  * Copyright (C) 2008 Albert Davis
  * Author: Albert Davis <aldavis@gnu.org>
  *
@@ -21,7 +21,6 @@
  *------------------------------------------------------------------
  */
 #include "u_parameter.h"
-#include "globals.h"
 #include "s__.h"
 #include "m_wave.h"
 #include "u_function.h"
@@ -30,7 +29,7 @@ namespace {
 /*--------------------------------------------------------------------------*/
 class MEASURE : public FUNCTION {
 public:
-  std::string eval(CS& Cmd, CARD_LIST* Scope)const
+  std::string eval(CS& Cmd, const CARD_LIST* Scope)const
   {
     std::string probe_name;
     PARAMETER<double> before(BIGBIG);
@@ -70,7 +69,7 @@ public:
       before.e_val(BIGBIG, Scope);
       after.e_val(-BIGBIG, Scope);
 
-      double time = BIGBIG;
+      double time = (last) ? -BIGBIG : BIGBIG;
       double m = BIGBIG;
       WAVE::const_iterator begin = lower_bound(w->begin(), w->end(), DPAIR(after, -BIGBIG));
       WAVE::const_iterator end   = upper_bound(w->begin(), w->end(), DPAIR(before, BIGBIG));
@@ -88,7 +87,7 @@ public:
     }
   }
 } p2;
-DISPATCHER<FUNCTION>::INSTALL d2(&function_dispatcher, "min", &p2);
+DISPATCHER<FUNCTION>::INSTALL d2(&measure_dispatcher, "min", &p2);
 /*--------------------------------------------------------------------------*/
 }
 /*--------------------------------------------------------------------------*/
