@@ -457,7 +457,7 @@ T& BSMATRIX<T>::m(int r, int c)
  *   Writing to trash is allowed and encouraged,
  *   but reading it gives a number not useful for anything.
  */
-#if 0
+
 template <class T>
 const T& BSMATRIX<T>::s(int row, int col)
 {untested();
@@ -490,7 +490,7 @@ const T& BSMATRIX<T>::s(int row, int col)
   }
   unreachable();
 }
-#endif
+
 /*--------------------------------------------------------------------------*/
 template <class T>
 void BSMATRIX<T>::load_point(int i, int j, T value)
