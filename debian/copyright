@@ -1,0 +1,23 @@
+Format: http://anonscm.debian.org/viewvc/dep/web/deps/dep5.mdwn?view=co&pathrev=174 
+Upstream-Contact: Albert Davis <aldavis@ieee.org>
+Upstream-Name: Gnucap
+Source: http://gnucap.org
+Disclaimer: GNUCAP was previously known as ACS, Al's Circuit Simulator, up to
+ version 0.29.
+
+Files: *
+Copyright: 1983-2003 Albert Davis <aldavis@ieee.org>
+License: GPL-2
+
+debian/*:
+Copyright: 1997 Jonathan K. Rabone <jkr@debian.org>
+           1999-2006 Hamish Moffatt <hamish@debian.org
+           2010-2011 أحمد المحمودي (Ahmed El-Mahmoudy) <aelmahmoudy@sabily.org>
+License: GPL-2
+ This program is free software; you can redistribute it and/or modify it under
+ the terms of the GNU General Public License as published by the Free Software
+ Foundation, version 2.
+ .
+ On Debian GNU/Linux systems, the complete text of the GNU General Public
+ License can be found in `/usr/share/common-licenses/GPL-2'
+

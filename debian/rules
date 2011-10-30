@@ -1,0 +1,30 @@
+#!/usr/bin/make -f
+
+%:
+	dh $@
+
+override_dh_auto_configure:
+	./autogen.sh
+	dh_auto_configure -- LDFLAGS="$(LDFLAGS) -Wl,--as-needed"
+
+override_dh_auto_build:
+	dh_auto_build
+	#$(MAKE) -C man html/index.html
+
+override_dh_auto_clean:
+	dh_auto_clean
+	# So as not to pollute the .diff:
+	#-rm man/gnucap-man.pdf
+	#-rm -rf man/html
+
+override_dh_installdocs:
+	dh_installdocs
+	# Remove LaTeX sources from HTML documentation:
+	##rm debian/gnucap/usr/share/doc/gnucap/html/*.hi??
+	# Remove un-necessary docs installed by upstream:
+	#rm debian/gnucap/usr/share/doc/gnucap/COPYING
+	#rm debian/gnucap/usr/share/doc/gnucap/INSTALL
+	#rm debian/gnucap/usr/share/doc/gnucap/history
+
+override_dh_compress:
+	dh_compress -X.pdf -X.ckt
