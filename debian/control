@@ -1,17 +1,11 @@
 Source: gnucap
 Section: electronics
 Priority: optional
-Maintainer: Debian Electronics Team <pkg-electronics-devel@lists.alioth.debian.org>
-Uploaders: Hamish Moffatt <hamish@debian.org>,
-           أحمد المحمودي (Ahmed El-Mahmoudy) <aelmahmoudy@sabily.org>,
-           Wesley J. Landaker <wjl@icecavern.net>
-DM-Upload-Allowed: yes
+Maintainer: Henrik Johansson
 Standards-Version: 3.9.2
-Build-Depends: debhelper (>= 8), libreadline-dev
+Build-Depends: debhelper (>= 8), libreadline-dev, autotools-dev, autoconf, automake, libtool
 #, hevea, texlive
 Homepage: http://gnucap.org
-Vcs-Git: git://git.debian.org/git/pkg-electronics/gnucap.git
-Vcs-Browser: http://git.debian.org/?p=pkg-electronics/gnucap.git
 
 Package: gnucap
 Architecture: any
