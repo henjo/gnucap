@@ -1,7 +1,7 @@
 Source: gnucap
 Section: electronics
 Priority: optional
-Maintainer: Henrik Johansson
+Maintainer: Henrik Johansson <henrik@johome.net>
 Standards-Version: 3.9.2
 Build-Depends: debhelper (>= 8), libreadline-dev, autotools-dev, autoconf, automake, libtool
 #, hevea, texlive
