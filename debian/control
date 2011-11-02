@@ -7,7 +7,7 @@ Build-Depends: debhelper (>= 8), libreadline-dev, autotools-dev, autoconf, autom
 #, hevea, texlive
 Homepage: http://gnucap.org
 
-Package: gnucap
+Package: gnucap-bin
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}
 Description: GNU Circuit Analysis package
