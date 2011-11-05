@@ -164,6 +164,7 @@ AC_OUTPUT([
 	examples/Makefile
 	modelgen/Makefile
 	src/Makefile
+	libgnucap.pc
 	])
 
 AC_MSG_RESULT([

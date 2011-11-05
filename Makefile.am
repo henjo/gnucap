@@ -6,3 +6,5 @@ SUBDIRS=	doc examples modelgen src
 
 EXTRA_DIST=	autogen.sh Makefile.template configure.old
 
+pkgconfigdir=$(libdir)/pkgconfig
+pkgconfig_DATA=libgnucap.pc

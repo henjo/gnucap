@@ -1,0 +1,10 @@
+prefix=@prefix@
+exec_prefix=@prefix@
+libdir=@exec_prefix@/lib
+includedir=@prefix@/include
+
+Name: libgnucap
+Description: GNUCAP circuit simulator as shared library
+Version: @VERSION@
+Libs: -L${libdir} -lgnucap -lreadline
+Cflags: -I${includedir}
