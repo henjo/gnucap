@@ -3,7 +3,7 @@ Section: electronics
 Priority: optional
 Maintainer: Henrik Johansson <henrik@johome.net>
 Standards-Version: 3.9.2
-Build-Depends: debhelper (>= 8), libreadline-dev, autotools-dev, autoconf, automake, libtool
+Build-Depends: debhelper (>= 8), libreadline6-dev, autotools-dev, autoconf, automake, libtool
 #, hevea, texlive
 Homepage: http://gnucap.org
 
@@ -21,7 +21,7 @@ Description: GNU Circuit Analysis package
 
 Package: libgnucap
 Architecture: any
-Depends: ${shlibs:Depends}, ${misc:Depends}, libreadline
+Depends: ${shlibs:Depends}, ${misc:Depends}, libreadline6
 Description: GNU Circuit Analysis package shared library
  GNUCAP is a general purpose circuit simulator.  It performs nonlinear
  dc and transient analyses, Fourier analysis, and ac analysis
@@ -33,7 +33,7 @@ Description: GNU Circuit Analysis package shared library
 
 Package: libgnucap-dev
 Architecture: any
-Depends: libgnucap (= ${binary:Version}), ${shlibs:Depends}, ${misc:Depends}, libreadline-dev
+Depends: libgnucap (= ${binary:Version}), ${shlibs:Depends}, ${misc:Depends}, libreadline6-dev
 Description: GNU Circuit Analysis package shared library
  GNUCAP is a general purpose circuit simulator.  It performs nonlinear
  dc and transient analyses, Fourier analysis, and ac analysis
