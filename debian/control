@@ -4,12 +4,13 @@ Priority: optional
 Maintainer: Henrik Johansson <henrik@johome.net>
 Standards-Version: 3.9.2
 Build-Depends: debhelper (>= 8), libreadline6-dev, autotools-dev, autoconf, automake, libtool
-#, hevea, texlive
 Homepage: http://gnucap.org
 
 Package: gnucap-bin
 Architecture: any
-Depends: ${misc:Depends}, libgnucap (= ${binary:Version})
+Depends: ${shlibs:Depends}, ${misc:Depends}, libgnucap (= ${binary:Version})
+Conflicts: gnucap
+Replaces: gnucap
 Description: GNU Circuit Analysis package
  GNUCAP is a general purpose circuit simulator.  It performs nonlinear
  dc and transient analyses, Fourier analysis, and ac analysis
